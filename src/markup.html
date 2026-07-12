@@ -1,0 +1,145 @@
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-name">SELN <em>Prompt Studio</em></div>
+      <div class="brand-sub">Strategic Reflection Guide v.17 · 261 prompts · 12 editions</div>
+    </div>
+    <button class="count-pill" id="countPill" type="button" title="Open My Set">0 selected</button>
+  </header>
+
+  <nav class="tabs" aria-label="Views" id="tabs">
+    <button type="button" class="tab is-active" data-view="library">Library</button>
+    <button type="button" class="tab" data-view="set">My Set<span class="tab-count" id="navCount" hidden>0</span></button>
+    <button type="button" class="tab" data-view="export">Export</button>
+  </nav>
+
+  <main>
+    <section id="view-library" class="view">
+      <input id="q" class="search" type="search" placeholder="Search prompts, categories, or IDs…" aria-label="Search prompts">
+      <div class="control-row">
+        <button type="button" class="btn" id="filtersBtn">Filters<span class="mini-count" id="filterCount" hidden>0</span></button>
+        <label class="sort-label">Sort
+          <select id="sort" class="select">
+            <option value="guide">Guide order</option>
+            <option value="az">A → Z</option>
+            <option value="category">Category</option>
+            <option value="type">Type</option>
+            <option value="edition">Edition</option>
+          </select>
+        </label>
+      </div>
+      <div class="chips" id="edChips" role="group" aria-label="Filter by edition"></div>
+      <div class="result-row">
+        <span class="result-count" id="resultCount"></span>
+        <button type="button" class="btn btn-ghost" id="addAllBtn">Add all shown</button>
+      </div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section id="view-set" class="view" hidden>
+      <h2 class="view-title">My Set</h2>
+      <p class="view-sub" id="setSummary">Arrange, edit, and annotate your selected prompts.</p>
+      <div class="empty" id="setEmpty">
+        <p>No prompts selected yet.</p>
+        <p class="empty-sub">Browse the library and tap <b>Add</b> on any prompt — then come back here to arrange, edit, and annotate your set before exporting.</p>
+        <button type="button" class="btn btn-primary" data-goto="library">Browse the library</button>
+      </div>
+      <ol class="set-list" id="setList"></ol>
+      <div class="set-actions" id="setActions" hidden>
+        <button type="button" class="btn" id="addCustomBtn">+ Custom prompt</button>
+        <button type="button" class="btn btn-danger-ghost" id="clearBtn">Clear all</button>
+        <button type="button" class="btn btn-primary" data-goto="export">Continue to export →</button>
+      </div>
+      <form class="custom-form" id="customForm" hidden>
+        <label class="fld"><span>Prompt text</span>
+          <textarea id="customText" rows="3" placeholder="Write your own reflection prompt…"></textarea>
+        </label>
+        <label class="fld"><span>Category label (optional)</span>
+          <input id="customCat" type="text" placeholder="e.g. Local Priorities">
+        </label>
+        <div class="form-row">
+          <button type="submit" class="btn btn-primary">Add to set</button>
+          <button type="button" class="btn" id="customCancel">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="view-export" class="view" hidden>
+      <h2 class="view-title">Export</h2>
+      <p class="view-sub" id="exportSummary"></p>
+      <div class="export-grid">
+        <fieldset class="panel">
+          <legend>Document details</legend>
+          <label class="fld"><span>Title</span><input id="docTitle" placeholder="SELN Reflection Session"></label>
+          <label class="fld"><span>Subtitle / occasion</span><input id="docSubtitle" placeholder="e.g. Quarterly provider convening"></label>
+          <div class="fld-row">
+            <label class="fld"><span>Facilitator</span><input id="docFacilitator" placeholder="Optional"></label>
+            <label class="fld"><span>Organization</span><input id="docOrg" placeholder="Optional"></label>
+          </div>
+          <label class="fld"><span>Date</span><input id="docDate" type="date"></label>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Format</legend>
+          <div class="formats" id="formats">
+            <label class="format"><input type="radio" name="fmt" value="word" checked><b>Word document</b><span>.doc — discussion guide with optional writing space</span></label>
+            <label class="format"><input type="radio" name="fmt" value="pptx"><b>PowerPoint deck</b><span>.pptx — title slide plus one slide per prompt</span></label>
+            <label class="format"><input type="radio" name="fmt" value="agenda"><b>Meeting agenda</b><span>.doc — timed agenda built from your set</span></label>
+            <label class="format"><input type="radio" name="fmt" value="pdf"><b>PDF / Print</b><span>Opens your print dialog — save as PDF or print handouts</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Options</legend>
+          <label class="check"><input type="checkbox" id="optMeta" checked>Show edition &amp; category</label>
+          <label class="check"><input type="checkbox" id="optIds" checked>Show prompt IDs</label>
+          <label class="check"><input type="checkbox" id="optNotes" checked>Include guidance &amp; facilitator notes</label>
+          <label class="check"><input type="checkbox" id="optGroup">Group by category</label>
+          <label class="check doc-only"><input type="checkbox" id="optBreaks">One prompt per page</label>
+          <label class="fld doc-only" id="linesFld"><span>Writing space under each prompt</span>
+            <select id="optLines" class="select">
+              <option value="0">None</option>
+              <option value="3">3 lines</option>
+              <option value="5">5 lines</option>
+              <option value="8">8 lines</option>
+            </select>
+          </label>
+          <div class="agenda-opts" id="agendaOpts" hidden>
+            <div class="fld-row">
+              <label class="fld"><span>Start time</span><input type="time" id="agStart" value="09:00"></label>
+              <label class="fld"><span>Minutes per prompt</span><input type="number" id="agMins" min="1" max="120" value="10"></label>
+            </div>
+            <label class="check"><input type="checkbox" id="agWelcome" checked>Welcome &amp; introductions (10 min)</label>
+            <label class="check"><input type="checkbox" id="agClosing" checked>Wrap-up &amp; next steps (10 min)</label>
+          </div>
+        </fieldset>
+      </div>
+      <div class="export-actions">
+        <button type="button" class="btn btn-primary btn-big" id="exportBtn">Download .doc</button>
+        <button type="button" class="btn" id="printBtn">Print / save as PDF</button>
+        <span class="export-hint" id="exportHint"></span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="sheet-backdrop" id="filterBackdrop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Filters">
+    <div class="sheet-head">
+      <b>Filters</b>
+      <button type="button" class="btn btn-ghost" id="clearFilters">Reset</button>
+      <button type="button" class="btn icon-btn" id="closeSheet" aria-label="Close filters">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="fgroup"><h3>Type</h3><div id="fTypes" class="checks"></div></div>
+      <div class="fgroup"><h3>Edition</h3><div id="fEds" class="checks"></div></div>
+      <div class="fgroup"><h3>Category <span class="hint">— within selected editions</span></h3><div id="fCats" class="checks checks-scroll"></div></div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn btn-primary" id="applyFilters">Show results</button>
+    </div>
+  </div>
+</div>
+
+<div id="printRoot" class="print-root" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
