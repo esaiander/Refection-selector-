@@ -21,16 +21,20 @@ it anywhere (e.g. GitHub Pages).
   attach facilitator notes, write custom prompts, and clear or continue to export.
   Your set and settings persist in the browser between visits.
 - **Export** — set title, subtitle, facilitator, organization, and date, then:
-  - **Word document** (`.doc`) — discussion guide with optional prompt IDs,
-    edition/category metadata, notes, category grouping, page breaks, and
-    ruled writing space under each prompt.
-  - **PowerPoint deck** (`.pptx`) — a real OOXML file generated in the browser:
-    title slide, optional section dividers, and one slide per prompt with
-    auto-sized type and slide counters.
-  - **Meeting agenda** (`.doc` or print) — timed rows computed from your start
-    time and minutes-per-prompt, with optional welcome and wrap-up blocks.
-  - **PDF / Print** — opens the browser print dialog with a clean print layout;
-    save as PDF or print handouts.
+  - **Word document** (`.docx`) — a real WordprocessingML file: discussion guide
+    with optional prompt IDs, edition/category metadata, notes, category
+    grouping, page breaks, and ruled writing space under each prompt.
+  - **PowerPoint deck** (`.pptx`) — a real PresentationML file: title slide,
+    optional section dividers, and one slide per prompt with auto-sized type
+    and slide counters.
+  - **Meeting agenda** (`.docx` or `.pdf`) — timed rows computed from your
+    start time and minutes-per-prompt, with optional welcome and wrap-up blocks.
+  - **PDF handout** (`.pdf`) — a print-ready PDF written directly on-device
+    (no print dialog needed), with page numbers and the same layout options
+    as the Word guide.
+
+  All four formats are genuine files generated entirely in the browser —
+  no server, no libraries, no print dialog.
 
 ## Develop
 
@@ -38,10 +42,10 @@ Source lives in `src/` and is assembled into `index.html`:
 
 ```
 data/seln_prompts.json   prompt data (SELN Strategic Reflection Guide v.17)
-src/app.css              design tokens, layout, light/dark themes, print styles
+src/app.css              design tokens, layout, light/dark themes
 src/markup.html          page structure
 src/app.js               UI state, filtering, selection, event wiring
-src/exporters.js         pure export builders: ZIP writer, PPTX, Word/agenda HTML
+src/exporters.js         pure export builders: ZIP writer, PPTX, DOCX, PDF
 build.js                 inlines everything into index.html
 ```
 
@@ -52,5 +56,5 @@ node build.js
 ```
 
 `src/exporters.js` has no DOM dependencies, so the document builders can be
-exercised directly in Node for testing (e.g. generating a `.pptx` and opening it
-with `python-pptx`).
+exercised directly in Node for testing — e.g. generating files and opening
+them with `python-pptx`, `python-docx`, and `pypdf`.

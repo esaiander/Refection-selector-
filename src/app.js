@@ -208,12 +208,12 @@
       el.style.display = (e.format === 'word' || e.format === 'pdf') ? '' : 'none';
     });
     var exportBtn = $('#exportBtn');
-    var labels = { word: 'Download .doc', pptx: 'Download .pptx', agenda: 'Download agenda .doc', pdf: 'Open print dialog' };
+    var labels = { word: 'Download .docx', pptx: 'Download .pptx', agenda: 'Download agenda .docx', pdf: 'Download .pdf' };
     exportBtn.textContent = labels[e.format];
     exportBtn.disabled = n === 0;
-    var printBtn = $('#printBtn');
-    printBtn.hidden = e.format === 'pptx' || e.format === 'pdf';
-    printBtn.disabled = n === 0;
+    var altBtn = $('#altBtn');
+    altBtn.hidden = e.format !== 'agenda';
+    altBtn.disabled = n === 0;
     $('#exportHint').textContent = (e.format === 'agenda' && n) ? 'Runs ' + agendaSpan() : '';
   }
 
@@ -315,33 +315,50 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
   }
 
-  function printHtml(bodyHtml) {
-    var root = $('#printRoot');
-    root.innerHTML = bodyHtml;
-    var cleanup = function () { root.innerHTML = ''; window.removeEventListener('afterprint', cleanup); };
-    window.addEventListener('afterprint', cleanup);
-    window.print();
+  /* Text measurement for PDF line wrapping: canvas metrics with metric-compatible
+     system faces (Times New Roman ≈ Times, Arial ≈ Helvetica). */
+  var measureCtx = document.createElement('canvas').getContext('2d');
+  var MEASURE_CSS = {
+    T: '"Times New Roman", Times, serif', TB: '"Times New Roman", Times, serif',
+    TI: '"Times New Roman", Times, serif', H: 'Arial, Helvetica, sans-serif',
+    HB: 'Arial, Helvetica, sans-serif'
+  };
+  function pdfMeasure(text, font, size) {
+    measureCtx.font = (font === 'TI' ? 'italic ' : '') +
+      (font === 'TB' || font === 'HB' ? 'bold ' : '') + size + 'px ' + MEASURE_CSS[font];
+    return measureCtx.measureText(text).width;
   }
 
-  function runExport(asPrint) {
+  var MIME = {
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    pdf: 'application/pdf'
+  };
+
+  function runExport(alt) {
     if (!state.sel.length) return;
     var items = exportItems();
     var o = exportOpts();
     var fmt = state.exp.format;
     var base = X.slug(o.title);
+    var name, bytes, mime;
     if (fmt === 'pptx') {
-      var bytes = X.buildPptx(items, o);
-      download(base + '.pptx', new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }));
-      toast('Downloaded ' + base + '.pptx');
-      return;
+      name = base + '.pptx'; mime = MIME.pptx;
+      bytes = X.buildPptx(items, o);
+    } else if (fmt === 'word') {
+      name = base + '.docx'; mime = MIME.docx;
+      bytes = X.buildDocx(items, o);
+    } else if (fmt === 'pdf') {
+      name = base + '.pdf'; mime = MIME.pdf;
+      bytes = X.buildPdf(items, o, pdfMeasure, false);
+    } else if (alt) { // agenda as PDF
+      name = base + '-agenda.pdf'; mime = MIME.pdf;
+      bytes = X.buildPdf(items, o, pdfMeasure, true);
+    } else {
+      name = base + '-agenda.docx'; mime = MIME.docx;
+      bytes = X.buildAgendaDocx(items, o);
     }
-    var body = fmt === 'agenda' ? X.buildAgendaBody(items, o) : X.buildDocBody(items, o);
-    if (fmt === 'pdf' || asPrint) {
-      printHtml(body);
-      return;
-    }
-    var name = base + (fmt === 'agenda' ? '-agenda' : '') + '.doc';
-    download(name, new Blob([X.wordWrap(o.title, body)], { type: 'application/msword' }));
+    download(name, new Blob([bytes], { type: mime }));
     toast('Downloaded ' + name);
   }
 
@@ -557,7 +574,7 @@
   bindOpt('#agClosing', 'agClosing', 'checked');
 
   $('#exportBtn').addEventListener('click', function () { runExport(false); });
-  $('#printBtn').addEventListener('click', function () { runExport(true); });
+  $('#altBtn').addEventListener('click', function () { runExport(true); });
 
   /* ---------- init ---------- */
 

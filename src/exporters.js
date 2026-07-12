@@ -1,7 +1,9 @@
 /* SELN Prompt Studio — export builders.
    Pure string/byte functions (no DOM) so they run in the browser and in Node tests.
-   Produces: a real .pptx (minimal OOXML in a stored ZIP), Word-compatible .doc HTML,
-   and a timed meeting-agenda document. */
+   Produces real files, generated entirely on-device:
+   - .pptx (PresentationML in a stored ZIP)
+   - .docx (WordprocessingML in a stored ZIP) — discussion guide and timed agenda
+   - .pdf  (hand-written PDF 1.4 with core Type1 fonts)                          */
 
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) module.exports = factory();
@@ -60,6 +62,34 @@
       if (it.type) bits.push(it.type);
     }
     return bits.join(' · ');
+  }
+
+  function coverBits(o) {
+    var bits = [];
+    if (o.dateStr) bits.push(o.dateStr);
+    if (o.facilitator) bits.push('Facilitator: ' + o.facilitator);
+    if (o.org) bits.push(o.org);
+    return bits.join('  ·  ');
+  }
+
+  /* Timed agenda rows shared by the .docx and .pdf agenda builders.
+     Returns {rows:[{t,min,title,meta,notes[]}], span:"9:00 AM – 10:20 AM (80 min)"} */
+  function agendaData(items, o) {
+    var ag = o.agenda || {};
+    var mins = Math.max(1, +ag.mins || 10);
+    var rows = [];
+    var t = parseHM(ag.start);
+    var startM = t;
+    if (ag.welcome) { rows.push({ t: t, min: 10, title: 'Welcome & introductions', meta: '', notes: [] }); t += 10; }
+    items.forEach(function (it) {
+      var notes = [];
+      if (o.notes && it.srcNote) notes.push('Guidance: ' + it.srcNote);
+      if (o.notes && it.userNote) notes.push('Note: ' + it.userNote);
+      rows.push({ t: t, min: mins, title: it.text, meta: metaLine(it, o), notes: notes });
+      t += mins;
+    });
+    if (ag.closing) { rows.push({ t: t, min: 10, title: 'Wrap-up & next steps', meta: '', notes: [] }); t += 10; }
+    return { rows: rows, span: fmt12(startM) + ' – ' + fmt12(t) + ' (' + (t - startM) + ' min)' };
   }
 
   /* ---------- ZIP writer (stored, no compression) ---------- */
@@ -228,10 +258,10 @@
     var total = items.length;
 
     // Title slide
-    var coverBits = [];
-    if (opts.facilitator) coverBits.push('Facilitated by ' + opts.facilitator);
-    if (opts.org) coverBits.push(opts.org);
-    if (opts.dateStr) coverBits.push(opts.dateStr);
+    var cb = [];
+    if (opts.facilitator) cb.push('Facilitated by ' + opts.facilitator);
+    if (opts.org) cb.push(opts.org);
+    if (opts.dateStr) cb.push(opts.dateStr);
     var titleShapes =
       rectShape(2, L, Math.round(1.42 * EMU), Math.round(0.75 * EMU), Math.round(0.05 * EMU), C_ACCENT) +
       textBox(3, L, Math.round(1.65 * EMU), W, Math.round(0.45 * EMU),
@@ -241,8 +271,8 @@
         para(run(opts.title, { sz: 4400, b: 1, color: C_INK }))) +
       (opts.subtitle ? textBox(5, L, Math.round(4.35 * EMU), W, Math.round(0.8 * EMU),
         para(run(opts.subtitle, { sz: 1800, color: C_MUTE, font: 'Calibri' }))) : '') +
-      (coverBits.length ? textBox(6, L, Math.round(6.35 * EMU), W, Math.round(0.5 * EMU),
-        para(run(coverBits.join('  ·  '), { sz: 1200, color: C_MUTE, font: 'Calibri' }))) : '');
+      (cb.length ? textBox(6, L, Math.round(6.35 * EMU), W, Math.round(0.5 * EMU),
+        para(run(cb.join('  ·  '), { sz: 1200, color: C_MUTE, font: 'Calibri' }))) : '');
     slides.push(slideXml(titleShapes));
 
     // Prompt slides (with optional section dividers)
@@ -351,123 +381,360 @@
     return zipStore(files);
   }
 
-  /* ---------- Word (.doc via HTML) ---------- */
+  /* ---------- DOCX (WordprocessingML) ---------- */
 
-  var WORD_CSS = [
-    'body{font-family:Georgia,"Times New Roman",serif;color:#20302C;font-size:11.5pt;line-height:1.45}',
-    'p{margin:0 0 6pt 0}',
-    '.xp-kicker{font-family:Arial,sans-serif;font-size:9pt;letter-spacing:1.5pt;color:#0E6E5C;font-weight:bold;text-transform:uppercase;margin:0 0 10pt 0}',
-    '.xp-title{font-size:26pt;font-weight:bold;margin:0 0 8pt 0;line-height:1.15}',
-    '.xp-subtitle{font-size:13pt;color:#5E6E69;margin:0 0 6pt 0}',
-    '.xp-covermeta{font-family:Arial,sans-serif;font-size:9.5pt;color:#5E6E69;margin:14pt 0 0 0}',
-    '.xp-cover{border-bottom:2.25pt solid #0E6E5C;padding-bottom:18pt;margin-bottom:24pt}',
-    '.xp-cat{font-size:15pt;font-weight:bold;color:#0E6E5C;border-bottom:1pt solid #C9C7BC;padding-bottom:4pt;margin:22pt 0 12pt 0}',
-    '.xp-item{margin:0 0 16pt 0}',
-    '.xp-q{font-size:12.5pt;margin:0 0 4pt 0}',
-    '.xp-qnum{font-family:Arial,sans-serif;font-size:10pt;font-weight:bold;color:#0E6E5C}',
-    '.xp-meta{font-family:Arial,sans-serif;font-size:8.5pt;color:#5E6E69;letter-spacing:.4pt;margin:0 0 3pt 0}',
-    '.xp-note{font-size:10.5pt;font-style:italic;color:#5E6E69;margin:0 0 3pt 0}',
-    '.xp-line{border-bottom:1pt solid #C9C7BC;margin:0 0 14pt 0;font-size:10pt}',
-    '.xp-break{page-break-before:always}',
-    'table.xp-agenda{border-collapse:collapse;width:100%;font-size:11pt}',
-    'table.xp-agenda th{font-family:Arial,sans-serif;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;color:#5E6E69;text-align:left;border-bottom:2.25pt solid #0E6E5C;padding:6pt 10pt 6pt 0}',
-    'table.xp-agenda td{border-bottom:1pt solid #C9C7BC;padding:9pt 10pt 9pt 0;vertical-align:top}',
-    'td.xp-time{white-space:nowrap;font-family:Arial,sans-serif;font-size:10pt;color:#0E6E5C;font-weight:bold;width:70pt}',
-    'td.xp-min{white-space:nowrap;font-family:Arial,sans-serif;font-size:10pt;color:#5E6E69;width:45pt}'
-  ].join('\n');
+  var DX_INK = '20302C', DX_MUTE = '5E6E69', DX_ACCENT = '0E6E5C', DX_LINE = 'C9C7BC';
 
-  function wordWrap(title, bodyHtml) {
-    return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
-      '<head><meta charset="utf-8"><title>' + hesc(title) + '</title>' +
-      '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->' +
-      '<style>@page{size:8.5in 11.0in;margin:1.0in 0.9in;mso-header-margin:0.5in;mso-footer-margin:0.5in}\n' + WORD_CSS + '</style>' +
-      '</head><body>' + bodyHtml + '</body></html>';
+  /* run — o: {font, sz(half-points), b, i, color, caps, spc(letter spacing, 1/20 pt)} */
+  function dxRun(text, o) {
+    o = o || {};
+    var f = o.font || 'Georgia';
+    return '<w:r><w:rPr><w:rFonts w:ascii="' + f + '" w:hAnsi="' + f + '"/>' +
+      (o.b ? '<w:b/>' : '') + (o.i ? '<w:i/>' : '') + (o.caps ? '<w:caps/>' : '') +
+      '<w:color w:val="' + (o.color || DX_INK) + '"/>' +
+      (o.spc ? '<w:spacing w:val="' + o.spc + '"/>' : '') +
+      '<w:sz w:val="' + (o.sz || 23) + '"/></w:rPr>' +
+      '<w:t xml:space="preserve">' + xesc(text) + '</w:t></w:r>';
   }
 
-  function coverHtml(o, kicker) {
-    var bits = [];
-    if (o.dateStr) bits.push(o.dateStr);
-    if (o.facilitator) bits.push('Facilitator: ' + o.facilitator);
-    if (o.org) bits.push(o.org);
-    return '<div class="xp-cover">' +
-      '<p class="xp-kicker">' + hesc(kicker) + '</p>' +
-      '<h1 class="xp-title">' + hesc(o.title) + '</h1>' +
-      (o.subtitle ? '<p class="xp-subtitle">' + hesc(o.subtitle) + '</p>' : '') +
-      (bits.length ? '<p class="xp-covermeta">' + hesc(bits.join('  ·  ')) + '</p>' : '') +
-      '</div>';
+  /* paragraph — o: {before, after (twentieths of a pt), brk, keepNext, bdr:{sz(1/8 pt), color, space}} */
+  function dxP(runs, o) {
+    o = o || {};
+    var ppr = '<w:pPr>' +
+      (o.keepNext ? '<w:keepNext/>' : '') +
+      (o.brk ? '<w:pageBreakBefore/>' : '') +
+      (o.bdr ? '<w:pBdr><w:bottom w:val="single" w:sz="' + o.bdr.sz + '" w:space="' + (o.bdr.space || 4) +
+        '" w:color="' + o.bdr.color + '"/></w:pBdr>' : '') +
+      '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after == null ? 120 : o.after) + '"/>' +
+      '</w:pPr>';
+    return '<w:p>' + ppr + (Array.isArray(runs) ? runs.join('') : (runs || '')) + '</w:p>';
   }
 
-  function itemHtml(it, o, withBreak) {
-    var html = '<div class="xp-item' + (withBreak ? ' xp-break' : '') + '">';
-    html += '<p class="xp-q"><span class="xp-qnum">' + it.n + '.&nbsp;&nbsp;</span>' + hesc(it.text) + '</p>';
+  function dxCover(o, kicker) {
+    var bits = coverBits(o);
+    return dxP(dxRun(kicker, { font: 'Arial', sz: 18, b: 1, color: DX_ACCENT, caps: 1, spc: 30 }), { after: 200 }) +
+      dxP(dxRun(o.title, { sz: 52, b: 1 }), { after: 120 }) +
+      (o.subtitle ? dxP(dxRun(o.subtitle, { sz: 26, color: DX_MUTE }), { after: 80 }) : '') +
+      dxP(bits ? dxRun(bits, { font: 'Arial', sz: 19, color: DX_MUTE }) : dxRun(' ', { sz: 8 }),
+        { before: 120, after: 400, bdr: { sz: 18, color: DX_ACCENT, space: 14 } });
+  }
+
+  function dxItem(it, o, brk) {
+    var xml = dxP([
+      dxRun(it.n + '.  ', { font: 'Arial', sz: 20, b: 1, color: DX_ACCENT }),
+      dxRun(it.text, { sz: 25 })
+    ], { after: 80, brk: brk });
     var m = metaLine(it, o);
-    if (m) html += '<p class="xp-meta">' + hesc(m) + '</p>';
-    if (o.notes && it.srcNote) html += '<p class="xp-note">Guidance: ' + hesc(it.srcNote) + '</p>';
-    if (o.notes && it.userNote) html += '<p class="xp-note">Facilitator note: ' + hesc(it.userNote) + '</p>';
-    for (var i = 0; i < (o.lines || 0); i++) html += '<p class="xp-line">&nbsp;</p>';
-    return html + '</div>';
+    if (m) xml += dxP(dxRun(m, { font: 'Arial', sz: 17, color: DX_MUTE }), { after: 60 });
+    if (o.notes && it.srcNote) xml += dxP(dxRun('Guidance: ' + it.srcNote, { sz: 21, i: 1, color: DX_MUTE }), { after: 60 });
+    if (o.notes && it.userNote) xml += dxP(dxRun('Facilitator note: ' + it.userNote, { sz: 21, i: 1, color: DX_MUTE }), { after: 60 });
+    for (var k = 0; k < (o.lines || 0); k++) {
+      xml += dxP(dxRun(' ', { sz: 20 }), { after: 280, bdr: { sz: 6, color: DX_LINE, space: 1 } });
+    }
+    xml += dxP(dxRun(' ', { sz: 8 }), { after: 120 }); // gap between items
+    return xml;
   }
 
-  /* Discussion-guide body — shared by the .doc download and the print/PDF view. */
-  function buildDocBody(items, o) {
-    var html = coverHtml(o, 'SELN Strategic Reflection Guide · ' + items.length +
+  function docxPackage(bodyXml) {
+    var W_NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+    var doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+      '<w:document ' + W_NS + '><w:body>' + bodyXml +
+      '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/>' +
+      '<w:pgMar w:top="1440" w:right="1296" w:bottom="1440" w:left="1296" w:header="720" w:footer="720" w:gutter="0"/>' +
+      '</w:sectPr></w:body></w:document>';
+    var styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+      '<w:styles ' + W_NS + '><w:docDefaults><w:rPrDefault><w:rPr>' +
+      '<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="23"/><w:color w:val="' + DX_INK + '"/>' +
+      '</w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault>' +
+      '</w:docDefaults></w:styles>';
+    return zipStore([
+      {
+        name: '[Content_Types].xml',
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+          '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+          '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+          '<Default Extension="xml" ContentType="application/xml"/>' +
+          '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+          '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+          '</Types>'
+      },
+      {
+        name: '_rels/.rels',
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' +
+          '<Relationship Id="rId1" Type="' + OD_REL + '/officeDocument" Target="word/document.xml"/></Relationships>'
+      },
+      {
+        name: 'word/_rels/document.xml.rels',
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' +
+          '<Relationship Id="rId1" Type="' + OD_REL + '/styles" Target="styles.xml"/></Relationships>'
+      },
+      { name: 'word/document.xml', data: doc },
+      { name: 'word/styles.xml', data: styles }
+    ]);
+  }
+
+  /* Discussion guide .docx */
+  function buildDocx(items, o) {
+    var body = dxCover(o, 'SELN Strategic Reflection Guide · ' + items.length +
       (items.length === 1 ? ' prompt' : ' prompts'));
     var first = true;
     if (o.group) {
       groupItems(items).forEach(function (sec) {
-        html += '<h2 class="xp-cat' + (o.breaks && !first ? ' xp-break' : '') + '">' + hesc(sec.category) + '</h2>';
+        body += dxP(dxRun(sec.category, { sz: 30, b: 1, color: DX_ACCENT }),
+          { before: 320, after: 160, keepNext: 1, bdr: { sz: 8, color: DX_LINE, space: 4 }, brk: o.breaks && !first });
         sec.items.forEach(function (it, i) {
-          html += itemHtml(it, o, o.breaks && !(i === 0));
+          body += dxItem(it, o, o.breaks && i > 0);
           first = false;
         });
       });
     } else {
       items.forEach(function (it) {
-        html += itemHtml(it, o, o.breaks && !first);
+        body += dxItem(it, o, o.breaks && !first);
         first = false;
       });
     }
-    return html;
+    return docxPackage(body);
   }
 
-  /* Timed agenda body — shared by the .doc download and the print/PDF view.
-     o.agenda: {start:"HH:MM", mins, welcome, closing} */
-  function buildAgendaBody(items, o) {
-    var ag = o.agenda || {};
-    var mins = Math.max(1, +ag.mins || 10);
-    var rows = [];
-    var t = parseHM(ag.start);
-    if (ag.welcome) { rows.push({ t: t, min: 10, title: 'Welcome & introductions', meta: '', notes: [] }); t += 10; }
-    items.forEach(function (it) {
-      var notes = [];
-      if (o.notes && it.srcNote) notes.push('Guidance: ' + it.srcNote);
-      if (o.notes && it.userNote) notes.push('Note: ' + it.userNote);
-      rows.push({ t: t, min: mins, title: it.text, meta: metaLine(it, o), notes: notes });
-      t += mins;
-    });
-    if (ag.closing) { rows.push({ t: t, min: 10, title: 'Wrap-up & next steps', meta: '', notes: [] }); t += 10; }
-    var startM = parseHM(ag.start);
+  /* Timed agenda .docx */
+  function buildAgendaDocx(items, o) {
+    var d = agendaData(items, o);
     var header = Object.assign({}, o, {
-      subtitle: o.subtitle,
-      dateStr: [o.dateStr, fmt12(startM) + ' – ' + fmt12(t) + ' (' + (t - startM) + ' min)']
-        .filter(Boolean).join('  ·  ')
+      dateStr: [o.dateStr, d.span].filter(Boolean).join('  ·  ')
     });
-    var html = coverHtml(header, 'Meeting Agenda');
-    html += '<table class="xp-agenda"><thead><tr><th>Time</th><th>Min</th><th>Item</th></tr></thead><tbody>';
-    rows.forEach(function (r) {
-      html += '<tr><td class="xp-time">' + fmt12(r.t) + '</td><td class="xp-min">' + r.min + '</td><td><b>' +
-        hesc(r.title) + '</b>' +
-        (r.meta ? '<br><span class="xp-meta">' + hesc(r.meta) + '</span>' : '') +
-        r.notes.map(function (nt) { return '<br><span class="xp-note">' + hesc(nt) + '</span>'; }).join('') +
-        '</td></tr>';
+    var body = dxCover(header, 'Meeting Agenda');
+
+    function tc(w, paras, hdr) {
+      return '<w:tc><w:tcPr><w:tcW w:w="' + w + '" w:type="dxa"/>' +
+        (hdr ? '<w:tcBorders><w:bottom w:val="single" w:sz="12" w:color="' + DX_ACCENT + '"/></w:tcBorders>' : '') +
+        '</w:tcPr>' + paras + '</w:tc>';
+    }
+    function hcell(w, label) {
+      return tc(w, dxP(dxRun(label, { font: 'Arial', sz: 16, b: 1, color: DX_MUTE, caps: 1, spc: 20 }), { after: 40 }), true);
+    }
+
+    var tbl = '<w:tbl><w:tblPr><w:tblW w:w="9648" w:type="dxa"/>' +
+      '<w:tblBorders><w:bottom w:val="single" w:sz="4" w:color="' + DX_LINE + '"/>' +
+      '<w:insideH w:val="single" w:sz="4" w:color="' + DX_LINE + '"/></w:tblBorders>' +
+      '<w:tblCellMar><w:top w:w="100" w:type="dxa"/><w:left w:w="0" w:type="dxa"/>' +
+      '<w:bottom w:w="100" w:type="dxa"/><w:right w:w="140" w:type="dxa"/></w:tblCellMar></w:tblPr>' +
+      '<w:tblGrid><w:gridCol w:w="1500"/><w:gridCol w:w="800"/><w:gridCol w:w="7348"/></w:tblGrid>' +
+      '<w:tr>' + hcell(1500, 'Time') + hcell(800, 'Min') + hcell(7348, 'Item') + '</w:tr>';
+
+    d.rows.forEach(function (r) {
+      var itemParas = dxP(dxRun(r.title, { sz: 23, b: 1 }), { after: 40 });
+      if (r.meta) itemParas += dxP(dxRun(r.meta, { font: 'Arial', sz: 16, color: DX_MUTE }), { after: 40 });
+      r.notes.forEach(function (nt) {
+        itemParas += dxP(dxRun(nt, { sz: 19, i: 1, color: DX_MUTE }), { after: 40 });
+      });
+      tbl += '<w:tr>' +
+        tc(1500, dxP(dxRun(fmt12(r.t), { font: 'Arial', sz: 20, b: 1, color: DX_ACCENT }), { after: 40 })) +
+        tc(800, dxP(dxRun(String(r.min), { font: 'Arial', sz: 20, color: DX_MUTE }), { after: 40 })) +
+        tc(7348, itemParas) +
+        '</w:tr>';
     });
-    html += '</tbody></table>';
-    return html;
+    tbl += '</w:tbl>';
+
+    return docxPackage(body + tbl + dxP(dxRun(' ', { sz: 8 }), { after: 0 }));
+  }
+
+  /* ---------- PDF ---------- */
+
+  var PDF_FONTS = { T: 'Times-Roman', TB: 'Times-Bold', TI: 'Times-Italic', H: 'Helvetica', HB: 'Helvetica-Bold' };
+  var PDF_REF = { T: 'F1', TB: 'F2', TI: 'F3', H: 'F4', HB: 'F5' };
+  var P_INK = '0.125 0.188 0.172', P_ACCENT = '0.055 0.431 0.361',
+    P_MUTE = '0.369 0.431 0.412', P_LINE = '0.788 0.780 0.737';
+
+  /* Map common typographic Unicode to WinAnsi bytes; anything unmappable becomes '?'. */
+  var WIN_MAP = {
+    0x2018: 0x91, 0x2019: 0x92, 0x201C: 0x93, 0x201D: 0x94, 0x2013: 0x96, 0x2014: 0x97,
+    0x2022: 0x95, 0x2026: 0x85, 0x2039: 0x8B, 0x203A: 0x9B, 0x0152: 0x8C, 0x0153: 0x9C,
+    0x2020: 0x86, 0x2021: 0x87, 0x2030: 0x89, 0x0160: 0x8A, 0x0161: 0x9A, 0x0178: 0x9F,
+    0x017D: 0x8E, 0x017E: 0x9E, 0x0192: 0x83, 0x02C6: 0x88, 0x02DC: 0x98, 0x2122: 0x99
+  };
+
+  function pdfEnc(t) {
+    var out = '';
+    for (var i = 0; i < t.length; i++) {
+      var c = t.charCodeAt(i);
+      if (WIN_MAP[c]) c = WIN_MAP[c];
+      if (c > 255) c = 63; // '?'
+      if (c === 92) out += '\\\\';
+      else if (c === 40) out += '\\(';
+      else if (c === 41) out += '\\)';
+      else out += String.fromCharCode(c);
+    }
+    return out;
+  }
+
+  /* Fallback text measurer for non-browser use; the app passes a canvas-based one. */
+  function approxMeasure(text, font, size) {
+    var f = (font === 'H' || font === 'HB') ? 0.52 : 0.5;
+    return text.length * size * f;
+  }
+
+  /* items + opts as elsewhere; measure(text, fontKey, size) -> width in points.
+     agendaMode: false = discussion guide, true = timed agenda. */
+  function buildPdf(items, o, measure, agendaMode) {
+    measure = measure || approxMeasure;
+    var PW = 612, PH = 792, M = 64, CW = PW - 2 * M;
+    var pages = [], ops = null, y = 0;
+
+    function newPage() { ops = []; pages.push(ops); y = PH - M; }
+    function need(h) { if (y - h < M) newPage(); }
+    function hline(x1, x2, wd, col) {
+      ops.push(wd + ' w ' + col + ' RG ' + x1.toFixed(1) + ' ' + y.toFixed(1) + ' m ' +
+        x2.toFixed(1) + ' ' + y.toFixed(1) + ' l S');
+    }
+    function put(x, t, f, size, col) {
+      ops.push('BT /' + PDF_REF[f] + ' ' + size + ' Tf ' + col + ' rg 1 0 0 1 ' +
+        x.toFixed(1) + ' ' + (y - size * 0.85).toFixed(1) + ' Tm (' + pdfEnc(t) + ') Tj ET');
+    }
+    function wrap(t, f, size, w) {
+      var words = String(t).split(/\s+/).filter(Boolean);
+      var lines = [], cur = '';
+      words.forEach(function (word) {
+        var trial = cur ? cur + ' ' + word : word;
+        if (cur && measure(trial, f, size) > w * 0.985) { lines.push(cur); cur = word; }
+        else cur = trial;
+      });
+      if (cur) lines.push(cur);
+      return lines.length ? lines : [''];
+    }
+    function paraOut(t, f, size, col, x, w, lh, after) {
+      wrap(t, f, size, w).forEach(function (ln) {
+        need(lh);
+        put(x, ln, f, size, col);
+        y -= lh;
+      });
+      y -= (after || 0);
+    }
+
+    newPage();
+
+    // Cover header
+    var kicker = agendaMode ? 'MEETING AGENDA'
+      : ('SELN STRATEGIC REFLECTION GUIDE · ' + items.length + (items.length === 1 ? ' PROMPT' : ' PROMPTS'));
+    var agd = agendaMode ? agendaData(items, o) : null;
+    var bits = coverBits(agendaMode
+      ? Object.assign({}, o, { dateStr: [o.dateStr, agd.span].filter(Boolean).join('  ·  ') })
+      : o);
+    paraOut(kicker, 'HB', 9, P_ACCENT, M, CW, 13, 4);
+    paraOut(o.title, 'TB', 24, P_INK, M, CW, 29, 2);
+    if (o.subtitle) paraOut(o.subtitle, 'T', 12.5, P_MUTE, M, CW, 17, 2);
+    if (bits) paraOut(bits, 'H', 9, P_MUTE, M, CW, 13, 0);
+    y -= 8;
+    hline(M, PW - M, 2, P_ACCENT);
+    y -= 26;
+
+    if (agendaMode) {
+      var timeX = M, minX = M + 76, itemX = M + 122, itemW = CW - 122;
+      function agHeader() {
+        put(timeX, 'TIME', 'HB', 8, P_MUTE);
+        put(minX, 'MIN', 'HB', 8, P_MUTE);
+        put(itemX, 'ITEM', 'HB', 8, P_MUTE);
+        y -= 13;
+        hline(M, PW - M, 1.2, P_ACCENT);
+        y -= 10;
+      }
+      agHeader();
+      agd.rows.forEach(function (r) {
+        var titleLines = wrap(r.title, 'TB', 11.5, itemW);
+        var metaLines = r.meta ? wrap(r.meta, 'H', 8, itemW) : [];
+        var noteLines = [];
+        r.notes.forEach(function (nt) { noteLines = noteLines.concat(wrap(nt, 'TI', 9.5, itemW)); });
+        var rowH = titleLines.length * 15 + metaLines.length * 11 + noteLines.length * 12.5 + 12;
+        if (y - rowH < M) { newPage(); agHeader(); }
+        put(timeX, fmt12(r.t), 'HB', 9.5, P_ACCENT);
+        put(minX, String(r.min), 'H', 9.5, P_MUTE);
+        titleLines.forEach(function (ln) { put(itemX, ln, 'TB', 11.5, P_INK); y -= 15; });
+        metaLines.forEach(function (ln) { put(itemX, ln, 'H', 8, P_MUTE); y -= 11; });
+        noteLines.forEach(function (ln) { put(itemX, ln, 'TI', 9.5, P_MUTE); y -= 12.5; });
+        y -= 6;
+        hline(M, PW - M, 0.7, P_LINE);
+        y -= 10;
+      });
+    } else {
+      var first = true;
+      function itemPdf(it) {
+        if (o.breaks && !first) newPage();
+        var body = it.n + '.  ' + it.text;
+        var est = wrap(body, 'T', 12.5, CW).length * 18 + 26;
+        need(Math.min(est, PH - 2 * M));
+        paraOut(body, 'T', 12.5, P_INK, M, CW, 18, 2);
+        var m = metaLine(it, o);
+        if (m) paraOut(m, 'H', 8.5, P_MUTE, M, CW, 12, 2);
+        if (o.notes && it.srcNote) paraOut('Guidance: ' + it.srcNote, 'TI', 10.5, P_MUTE, M, CW, 14, 2);
+        if (o.notes && it.userNote) paraOut('Facilitator note: ' + it.userNote, 'TI', 10.5, P_MUTE, M, CW, 14, 2);
+        for (var k = 0; k < (o.lines || 0); k++) {
+          need(24);
+          y -= 20;
+          hline(M, PW - M, 0.7, P_LINE);
+          y -= 3;
+        }
+        y -= 12;
+        first = false;
+      }
+      if (o.group) {
+        groupItems(items).forEach(function (sec) {
+          if (o.breaks && !first) newPage();
+          need(60);
+          paraOut(sec.category, 'TB', 13, P_ACCENT, M, CW, 17, 0);
+          y -= 3;
+          hline(M, PW - M, 0.7, P_LINE);
+          y -= 14;
+          sec.items.forEach(itemPdf);
+        });
+      } else {
+        items.forEach(itemPdf);
+      }
+    }
+
+    // Page-number footers (added after pagination so totals are known)
+    var total = pages.length;
+    pages.forEach(function (p, i) {
+      var t = 'Page ' + (i + 1) + ' of ' + total;
+      var w = measure(t, 'H', 8);
+      p.push('BT /F4 8 Tf ' + P_MUTE + ' rg 1 0 0 1 ' + ((PW - w) / 2).toFixed(1) + ' 32 Tm (' + pdfEnc(t) + ') Tj ET');
+    });
+
+    // Assemble: obj 1 catalog, 2 pages, 3-7 fonts, then page/content pairs
+    var objs = [];
+    var kids = pages.map(function (_, i) { return (8 + 2 * i) + ' 0 R'; }).join(' ');
+    objs.push('<< /Type /Catalog /Pages 2 0 R >>');
+    objs.push('<< /Type /Pages /Kids [' + kids + '] /Count ' + total + ' >>');
+    ['T', 'TB', 'TI', 'H', 'HB'].forEach(function (k) {
+      objs.push('<< /Type /Font /Subtype /Type1 /BaseFont /' + PDF_FONTS[k] + ' /Encoding /WinAnsiEncoding >>');
+    });
+    pages.forEach(function (p, i) {
+      objs.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + PW + ' ' + PH + '] ' +
+        '/Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R /F4 6 0 R /F5 7 0 R >> >> ' +
+        '/Contents ' + (9 + 2 * i) + ' 0 R >>');
+      var s = p.join('\n');
+      objs.push('<< /Length ' + s.length + ' >>\nstream\n' + s + '\nendstream');
+    });
+
+    var out = '%PDF-1.4\n%âãÏÓ\n';
+    var offsets = [];
+    objs.forEach(function (obj, i) {
+      offsets.push(out.length);
+      out += (i + 1) + ' 0 obj\n' + obj + '\nendobj\n';
+    });
+    var xref = out.length;
+    out += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n';
+    offsets.forEach(function (off) {
+      out += ('0000000000' + off).slice(-10) + ' 00000 n \n';
+    });
+    out += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+
+    var bytes = new Uint8Array(out.length);
+    for (var i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 0xFF;
+    return bytes;
   }
 
   return {
     xesc: xesc, hesc: hesc, slug: slug, fmt12: fmt12, parseHM: parseHM, longDate: longDate,
-    crc32: crc32, zipStore: zipStore, buildPptx: buildPptx,
-    wordWrap: wordWrap, buildDocBody: buildDocBody, buildAgendaBody: buildAgendaBody, WORD_CSS: WORD_CSS
+    agendaData: agendaData, crc32: crc32, zipStore: zipStore,
+    buildPptx: buildPptx, buildDocx: buildDocx, buildAgendaDocx: buildAgendaDocx, buildPdf: buildPdf
   };
 });

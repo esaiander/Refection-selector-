@@ -82,10 +82,10 @@
         <fieldset class="panel">
           <legend>Format</legend>
           <div class="formats" id="formats">
-            <label class="format"><input type="radio" name="fmt" value="word" checked><b>Word document</b><span>.doc — discussion guide with optional writing space</span></label>
+            <label class="format"><input type="radio" name="fmt" value="word" checked><b>Word document</b><span>.docx — discussion guide with optional writing space</span></label>
             <label class="format"><input type="radio" name="fmt" value="pptx"><b>PowerPoint deck</b><span>.pptx — title slide plus one slide per prompt</span></label>
-            <label class="format"><input type="radio" name="fmt" value="agenda"><b>Meeting agenda</b><span>.doc — timed agenda built from your set</span></label>
-            <label class="format"><input type="radio" name="fmt" value="pdf"><b>PDF / Print</b><span>Opens your print dialog — save as PDF or print handouts</span></label>
+            <label class="format"><input type="radio" name="fmt" value="agenda"><b>Meeting agenda</b><span>.docx or .pdf — timed agenda built from your set</span></label>
+            <label class="format"><input type="radio" name="fmt" value="pdf"><b>PDF handout</b><span>.pdf — polished, print-ready document generated on-device</span></label>
           </div>
         </fieldset>
 
@@ -115,8 +115,8 @@
         </fieldset>
       </div>
       <div class="export-actions">
-        <button type="button" class="btn btn-primary btn-big" id="exportBtn">Download .doc</button>
-        <button type="button" class="btn" id="printBtn">Print / save as PDF</button>
+        <button type="button" class="btn btn-primary btn-big" id="exportBtn">Download .docx</button>
+        <button type="button" class="btn" id="altBtn" hidden>Download agenda .pdf</button>
         <span class="export-hint" id="exportHint"></span>
       </div>
     </section>
@@ -141,5 +141,4 @@
   </div>
 </div>
 
-<div id="printRoot" class="print-root" aria-hidden="true"></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
