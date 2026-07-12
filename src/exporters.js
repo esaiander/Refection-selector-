@@ -42,25 +42,27 @@
       .toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   }
 
-  /* Group items by category, preserving the order categories first appear. */
-  function groupItems(items) {
+  /* Group items by a field ('fw' | 'category' | 'edition'), preserving the
+     order group values first appear. */
+  function groupItems(items, key) {
     var order = [], map = {};
     items.forEach(function (it) {
-      var c = it.category || 'Custom';
+      var c = it[key] || 'Other';
       if (!map[c]) { map[c] = []; order.push(c); }
       map[c].push(it);
     });
     return order.map(function (c) { return { category: c, items: map[c] }; });
   }
 
+  /* Metadata line under a prompt, driven by the show-toggles:
+     o.ids, o.showEd, o.showFw (framework category), o.showCat (original), o.showType */
   function metaLine(it, o) {
     var bits = [];
     if (o.ids && it.id) bits.push(it.id);
-    if (o.meta) {
-      if (it.edition) bits.push(it.edition);
-      if (it.category) bits.push(it.category);
-      if (it.type) bits.push(it.type);
-    }
+    if (o.showEd && it.edition) bits.push(it.edition);
+    if (o.showFw && it.fw) bits.push(it.fw);
+    if (o.showCat && it.category) bits.push(it.category);
+    if (o.showType && it.type) bits.push(it.type);
     return bits.join(' · ');
   }
 
@@ -77,18 +79,20 @@
   function agendaData(items, o) {
     var ag = o.agenda || {};
     var mins = Math.max(1, +ag.mins || 10);
+    var wMins = Math.max(1, +ag.welcomeMins || 10);
+    var cMins = Math.max(1, +ag.closingMins || 10);
     var rows = [];
     var t = parseHM(ag.start);
     var startM = t;
-    if (ag.welcome) { rows.push({ t: t, min: 10, title: 'Welcome & introductions', meta: '', notes: [] }); t += 10; }
+    if (ag.welcome) { rows.push({ t: t, min: wMins, title: 'Welcome & introductions', meta: '', notes: [] }); t += wMins; }
     items.forEach(function (it) {
       var notes = [];
-      if (o.notes && it.srcNote) notes.push('Guidance: ' + it.srcNote);
-      if (o.notes && it.userNote) notes.push('Note: ' + it.userNote);
+      if (o.guidance && it.srcNote) notes.push('Guidance: ' + it.srcNote);
+      if (o.myNotes && it.userNote) notes.push('Note: ' + it.userNote);
       rows.push({ t: t, min: mins, title: it.text, meta: metaLine(it, o), notes: notes });
       t += mins;
     });
-    if (ag.closing) { rows.push({ t: t, min: 10, title: 'Wrap-up & next steps', meta: '', notes: [] }); t += 10; }
+    if (ag.closing) { rows.push({ t: t, min: cMins, title: 'Wrap-up & next steps', meta: '', notes: [] }); t += cMins; }
     return { rows: rows, span: fmt12(startM) + ' – ' + fmt12(t) + ' (' + (t - startM) + ' min)' };
   }
 
@@ -276,7 +280,7 @@
     slides.push(slideXml(titleShapes));
 
     // Prompt slides (with optional section dividers)
-    var sections = opts.group ? groupItems(items) : [{ category: null, items: items }];
+    var sections = opts.groupBy ? groupItems(items, opts.groupBy) : [{ category: null, items: items }];
     sections.forEach(function (sec) {
       if (sec.category) {
         slides.push(slideXml(
@@ -292,13 +296,14 @@
       }
       sec.items.forEach(function (it) {
         var kickerBits = [];
-        if (opts.meta && it.category) kickerBits.push(it.category);
-        if (opts.meta && it.edition) kickerBits.push(it.edition);
+        if (opts.showFw && it.fw) kickerBits.push(it.fw);
+        if (opts.showCat && it.category) kickerBits.push(it.category);
+        if (opts.showEd && it.edition) kickerBits.push(it.edition);
         var footBits = [];
         if (opts.ids && it.id) footBits.push(it.id);
-        if (opts.meta && it.type) footBits.push(it.type);
-        if (opts.notes && it.srcNote) footBits.push(it.srcNote);
-        if (opts.notes && it.userNote) footBits.push(it.userNote);
+        if (opts.showType && it.type) footBits.push(it.type);
+        if (opts.guidance && it.srcNote) footBits.push(it.srcNote);
+        if (opts.myNotes && it.userNote) footBits.push(it.userNote);
         var shapes =
           (kickerBits.length ? textBox(2, L, Math.round(0.55 * EMU), W, Math.round(0.4 * EMU),
             para(run(kickerBits.join('  ·  ').toUpperCase(), { sz: 1300, b: 1, color: C_ACCENT, font: 'Calibri', spc: 120 }))) : '') +
@@ -420,14 +425,14 @@
   }
 
   function dxItem(it, o, brk) {
-    var xml = dxP([
-      dxRun(it.n + '.  ', { font: 'Arial', sz: 20, b: 1, color: DX_ACCENT }),
-      dxRun(it.text, { sz: 25 })
-    ], { after: 80, brk: brk });
+    var runs = [];
+    if (o.numbers) runs.push(dxRun(it.n + '.  ', { font: 'Arial', sz: 20, b: 1, color: DX_ACCENT }));
+    runs.push(dxRun(it.text, { sz: 25 }));
+    var xml = dxP(runs, { after: 80, brk: brk });
     var m = metaLine(it, o);
     if (m) xml += dxP(dxRun(m, { font: 'Arial', sz: 17, color: DX_MUTE }), { after: 60 });
-    if (o.notes && it.srcNote) xml += dxP(dxRun('Guidance: ' + it.srcNote, { sz: 21, i: 1, color: DX_MUTE }), { after: 60 });
-    if (o.notes && it.userNote) xml += dxP(dxRun('Facilitator note: ' + it.userNote, { sz: 21, i: 1, color: DX_MUTE }), { after: 60 });
+    if (o.guidance && it.srcNote) xml += dxP(dxRun('Guidance: ' + it.srcNote, { sz: 21, i: 1, color: DX_MUTE }), { after: 60 });
+    if (o.myNotes && it.userNote) xml += dxP(dxRun('Facilitator note: ' + it.userNote, { sz: 21, i: 1, color: DX_MUTE }), { after: 60 });
     for (var k = 0; k < (o.lines || 0); k++) {
       xml += dxP(dxRun(' ', { sz: 20 }), { after: 280, bdr: { sz: 6, color: DX_LINE, space: 1 } });
     }
@@ -478,8 +483,8 @@
     var body = dxCover(o, 'SELN Strategic Reflection Guide · ' + items.length +
       (items.length === 1 ? ' prompt' : ' prompts'));
     var first = true;
-    if (o.group) {
-      groupItems(items).forEach(function (sec) {
+    if (o.groupBy) {
+      groupItems(items, o.groupBy).forEach(function (sec) {
         body += dxP(dxRun(sec.category, { sz: 30, b: 1, color: DX_ACCENT }),
           { before: 320, after: 160, keepNext: 1, bdr: { sz: 8, color: DX_LINE, space: 4 }, brk: o.breaks && !first });
         sec.items.forEach(function (it, i) {
@@ -658,14 +663,14 @@
       var first = true;
       function itemPdf(it) {
         if (o.breaks && !first) newPage();
-        var body = it.n + '.  ' + it.text;
+        var body = (o.numbers ? it.n + '.  ' : '') + it.text;
         var est = wrap(body, 'T', 12.5, CW).length * 18 + 26;
         need(Math.min(est, PH - 2 * M));
         paraOut(body, 'T', 12.5, P_INK, M, CW, 18, 2);
         var m = metaLine(it, o);
         if (m) paraOut(m, 'H', 8.5, P_MUTE, M, CW, 12, 2);
-        if (o.notes && it.srcNote) paraOut('Guidance: ' + it.srcNote, 'TI', 10.5, P_MUTE, M, CW, 14, 2);
-        if (o.notes && it.userNote) paraOut('Facilitator note: ' + it.userNote, 'TI', 10.5, P_MUTE, M, CW, 14, 2);
+        if (o.guidance && it.srcNote) paraOut('Guidance: ' + it.srcNote, 'TI', 10.5, P_MUTE, M, CW, 14, 2);
+        if (o.myNotes && it.userNote) paraOut('Facilitator note: ' + it.userNote, 'TI', 10.5, P_MUTE, M, CW, 14, 2);
         for (var k = 0; k < (o.lines || 0); k++) {
           need(24);
           y -= 20;
@@ -675,8 +680,8 @@
         y -= 12;
         first = false;
       }
-      if (o.group) {
-        groupItems(items).forEach(function (sec) {
+      if (o.groupBy) {
+        groupItems(items, o.groupBy).forEach(function (sec) {
           if (o.breaks && !first) newPage();
           need(60);
           paraOut(sec.category, 'TB', 13, P_ACCENT, M, CW, 17, 0);

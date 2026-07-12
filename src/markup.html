@@ -29,6 +29,7 @@
         </label>
       </div>
       <div class="chips" id="edChips" role="group" aria-label="Filter by edition"></div>
+      <div class="chips chips-fw" id="fwChips" role="group" aria-label="Filter by category"></div>
       <div class="result-row">
         <span class="result-count" id="resultCount"></span>
         <button type="button" class="btn btn-ghost" id="addAllBtn">Add all shown</button>
@@ -91,10 +92,25 @@
 
         <fieldset class="panel">
           <legend>Options</legend>
-          <label class="check"><input type="checkbox" id="optMeta" checked>Show edition &amp; category</label>
-          <label class="check"><input type="checkbox" id="optIds" checked>Show prompt IDs</label>
-          <label class="check"><input type="checkbox" id="optNotes" checked>Include guidance &amp; facilitator notes</label>
-          <label class="check"><input type="checkbox" id="optGroup">Group by category</label>
+          <label class="fld"><span>Group prompts</span>
+            <select id="optGroupBy" class="select">
+              <option value="">No grouping — keep my order</option>
+              <option value="fw">By category</option>
+              <option value="category">By original category</option>
+              <option value="edition">By edition</option>
+            </select>
+          </label>
+          <div class="fld"><span>Show with each prompt</span></div>
+          <div class="opt-cols">
+            <label class="check"><input type="checkbox" id="optNumbers" checked>Numbers</label>
+            <label class="check"><input type="checkbox" id="optIds" checked>Prompt IDs</label>
+            <label class="check"><input type="checkbox" id="optEd" checked>Edition</label>
+            <label class="check"><input type="checkbox" id="optFw" checked>Category</label>
+            <label class="check"><input type="checkbox" id="optCat">Original category</label>
+            <label class="check"><input type="checkbox" id="optType">Prompt type</label>
+            <label class="check"><input type="checkbox" id="optGuidance" checked>Guidance notes</label>
+            <label class="check"><input type="checkbox" id="optMyNotes" checked>My notes</label>
+          </div>
           <label class="check doc-only"><input type="checkbox" id="optBreaks">One prompt per page</label>
           <label class="fld doc-only" id="linesFld"><span>Writing space under each prompt</span>
             <select id="optLines" class="select">
@@ -109,8 +125,14 @@
               <label class="fld"><span>Start time</span><input type="time" id="agStart" value="09:00"></label>
               <label class="fld"><span>Minutes per prompt</span><input type="number" id="agMins" min="1" max="120" value="10"></label>
             </div>
-            <label class="check"><input type="checkbox" id="agWelcome" checked>Welcome &amp; introductions (10 min)</label>
-            <label class="check"><input type="checkbox" id="agClosing" checked>Wrap-up &amp; next steps (10 min)</label>
+            <div class="ag-extra">
+              <label class="check"><input type="checkbox" id="agWelcome" checked>Welcome &amp; introductions</label>
+              <input type="number" id="agWelcomeMins" class="ag-mins" min="1" max="90" value="10" aria-label="Welcome minutes"><span class="ag-unit">min</span>
+            </div>
+            <div class="ag-extra">
+              <label class="check"><input type="checkbox" id="agClosing" checked>Wrap-up &amp; next steps</label>
+              <input type="number" id="agClosingMins" class="ag-mins" min="1" max="90" value="10" aria-label="Wrap-up minutes"><span class="ag-unit">min</span>
+            </div>
           </div>
         </fieldset>
       </div>
@@ -133,7 +155,7 @@
     <div class="sheet-body">
       <div class="fgroup"><h3>Type</h3><div id="fTypes" class="checks"></div></div>
       <div class="fgroup"><h3>Edition</h3><div id="fEds" class="checks"></div></div>
-      <div class="fgroup"><h3>Category <span class="hint">— within selected editions</span></h3><div id="fCats" class="checks checks-scroll"></div></div>
+      <div class="fgroup"><h3>Category <span class="hint">— SELN Framework for Employment</span></h3><div id="fCats" class="checks"></div></div>
     </div>
     <div class="sheet-foot">
       <button type="button" class="btn btn-primary" id="applyFilters">Show results</button>

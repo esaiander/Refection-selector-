@@ -264,6 +264,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   scrollbar-width: thin;
 }
 
+.chips-fw { padding-top: 4px; }
+
 .chip {
   --ed: var(--mute);
   flex: 0 0 auto;
@@ -345,6 +347,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .pid { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--mute); }
 
 .pcard-cat { font-size: 12px; color: var(--mute); }
+
+.fw-name {
+  --ed: var(--mute);
+  font-weight: 600;
+  color: color-mix(in srgb, var(--ed) 62%, var(--ink));
+}
 
 .pcard-text {
   font-family: var(--serif);
@@ -538,7 +546,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
+.opt-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  margin-bottom: 10px;
+}
+
 .agenda-opts { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 12px; }
+
+.ag-extra { display: flex; align-items: center; gap: 8px; }
+
+.ag-extra .check { flex: 1; }
+
+.ag-mins {
+  width: 62px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 6px 8px;
+  font-size: 13.5px;
+}
+
+.ag-unit { font-size: 12px; color: var(--mute); }
 
 .export-actions {
   display: flex;

@@ -14,13 +14,19 @@ it anywhere (e.g. GitHub Pages).
 
 ### Features
 
-- **Library** — search all 261 prompts; filter by edition, category, and type
-  (Opener / Core Question / Follow-up / Closing); sort by guide order, A–Z,
-  category, type, or edition. One-tap add, or "Add all shown" for a filtered view.
+- **Library** — search all 261 prompts; filter by edition, SELN Framework
+  category (the 8 categories from the Framework for Employment), and type
+  (Opener / Core Question / Follow-up / Closing) via quick chips or the filter
+  sheet; sort by guide order, A–Z, category, type, or edition. One-tap add, or
+  "Add all shown" for a filtered view. Each prompt also keeps its original
+  fine-grained category for display and export.
 - **My Set** — reorder by drag (or arrow buttons on mobile), reword any prompt,
   attach facilitator notes, write custom prompts, and clear or continue to export.
   Your set and settings persist in the browser between visits.
-- **Export** — set title, subtitle, facilitator, organization, and date, then:
+- **Export** — set title, subtitle, facilitator, organization, and date;
+  group prompts by category, original category, or edition (or keep your own
+  order); toggle numbers, prompt IDs, edition, category, original category,
+  type, guidance notes, and your own notes independently; then:
   - **Word document** (`.docx`) — a real WordprocessingML file: discussion guide
     with optional prompt IDs, edition/category metadata, notes, category
     grouping, page breaks, and ruled writing space under each prompt.
