@@ -1,0 +1,2214 @@
+{
+  "meta": {
+    "source": "SELN Strategic Reflection Guide v.17",
+    "total_prompts": 261,
+    "editions": [
+      {
+        "name": "State Team",
+        "code": "ST",
+        "count": 72
+      },
+      {
+        "name": "Self-Guided",
+        "code": "SG",
+        "count": 18
+      },
+      {
+        "name": "Provider",
+        "code": "PR",
+        "count": 18
+      },
+      {
+        "name": "Family & Individual",
+        "code": "FI",
+        "count": 12
+      },
+      {
+        "name": "Case Manager",
+        "code": "CM",
+        "count": 19
+      },
+      {
+        "name": "Waiver Manager",
+        "code": "WM",
+        "count": 18
+      },
+      {
+        "name": "School Transition",
+        "code": "ST2",
+        "count": 18
+      },
+      {
+        "name": "VR Partnership",
+        "code": "VR",
+        "count": 18
+      },
+      {
+        "name": "Quality & Compliance",
+        "code": "QC",
+        "count": 18
+      },
+      {
+        "name": "Self-Advocate",
+        "code": "SA",
+        "count": 18
+      },
+      {
+        "name": "Executive Leadership",
+        "code": "EL",
+        "count": 16
+      },
+      {
+        "name": "Facilitator Tools",
+        "code": "FT",
+        "count": 16
+      }
+    ],
+    "types": [
+      "Closing",
+      "Core Question",
+      "Follow-up",
+      "Opener"
+    ],
+    "categories": [
+      "Advocacy and Expectations",
+      "Cross-System Alignment",
+      "Cultural Expectations",
+      "Employer & Community Connections",
+      "Employer Relationships & Job Development",
+      "Family & Individual Engagement",
+      "Financing & Accountability",
+      "Follow-up Questions",
+      "Funding & Incentives",
+      "Funding & Resource Alignment",
+      "Innovation & Risk-Taking",
+      "Interagency Collaboration",
+      "Leadership",
+      "Leadership & Agency Support",
+      "Leadership & Culture",
+      "Leadership Culture",
+      "Leadership Support",
+      "Learning & Feedback",
+      "Listening Session Wrap-Up Prompts",
+      "Lived Experience & Expertise",
+      "Looking Ahead",
+      "Measurement & Learning",
+      "Measurement, Learning, and Impact",
+      "Measuring What Matters",
+      "Outcome Tracking",
+      "Partnership with State Agencies",
+      "Peer Support & Leadership",
+      "Plain Language Reflection Questions",
+      "Provider Capacity & Innovation",
+      "Provider Capacity & Support",
+      "Provider Oversight & Support",
+      "Reflection and Feedback",
+      "Resource Alignment & Funding",
+      "Service Access and Planning",
+      "Service Coordination & Roles",
+      "Service Vision & Goals",
+      "Session Closings",
+      "Session Openers",
+      "Skills & Preparation",
+      "Staff Training & Capacity",
+      "System Learning & Improvement",
+      "System Navigation",
+      "Systems Change & Advocacy",
+      "Transition Planning & Coordination",
+      "Vision & Strategic Goals",
+      "Vision & Strategic Investment",
+      "Vision and Shared Purpose",
+      "Workforce & Capacity"
+    ]
+  },
+  "prompts": [
+    {
+      "id": "ST-001",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "What draws your team to employment work?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-002",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "How do you talk about employment goals when you're with other state leaders?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-003",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "What would need to shift for employment to feel more central to your agency's identity?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-004",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "Tell us about a moment when employment work felt most aligned with your agency's broader mission. What made that connection visible?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-005",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "Describe a conversation where you felt most excited talking about employment goals. Who were you talking to, and what made it energizing?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-006",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "What are you noticing about how employment fits into your agency's priorities lately?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-007",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "When employment comes up in leadership conversations, what themes do you consistently hear?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-008",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "If employment outcomes became a primary measure of your agency's success, what would need to change?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-009",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "Think about your employment goals from two years ago compared to now. What's changed in how you talk about them or what you prioritize? What influenced those changes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-010",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "When you think about your team's recent priorities and actions, where do you notice employment goals showing up? What does that tell you?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-011",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "Who has influenced your team's thinking about employment goals? What perspectives have been most important in shaping your approach?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-012",
+      "edition": "State Team",
+      "category": "Vision and Shared Purpose",
+      "prompt": "What's one question about employment goals that your team keeps returning to or should explore next?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-013",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "How does leadership communicate about employment priorities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-014",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "What would visible leadership support look like day-to-day?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-015",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "When has leadership support felt most tangible to you?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-016",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "Tell us about a time when leadership support for employment felt most tangible. What did that look like day-to-day?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-017",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "Describe a moment when you felt leadership really understood the complexity of employment work.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-018",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "How does leadership communicate about employment priorities in your experience?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-019",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "What does leadership support for employment look like in your agency right now?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-020",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "What would leadership support look like if it addressed the real barriers you face?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-021",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "If leadership asked you 'What do you need to be successful in employment work?', what would you say?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-022",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "Tell us about a recent leadership decision or action that supported employment work. What made it effective?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-023",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "Describe how different people in your system get opportunities to lead or shape employment work.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-024",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "What messages about employment do you hear from leadership—both spoken and unspoken?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-025",
+      "edition": "State Team",
+      "category": "Leadership Support",
+      "prompt": "Tell us about a time when leadership created space to learn from something that didn't work as planned.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-026",
+      "edition": "State Team",
+      "category": "Funding & Incentives",
+      "prompt": "How do funding structures support or complicate employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-027",
+      "edition": "State Team",
+      "category": "Funding & Incentives",
+      "prompt": "What funding conversations do you find yourself having repeatedly?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-028",
+      "edition": "State Team",
+      "category": "Funding & Incentives",
+      "prompt": "If you could redesign one aspect of employment funding, what would it be?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-029",
+      "edition": "State Team",
+      "category": "Funding & Incentives",
+      "prompt": "What funding conversations do you find yourself having repeatedly? What would success look like?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-030",
+      "edition": "State Team",
+      "category": "Funding & Incentives",
+      "prompt": "Think about the last few funding decisions your team made. What did those decisions make easier or harder?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-031",
+      "edition": "State Team",
+      "category": "Funding & Incentives",
+      "prompt": "Tell us about a specific example where funding either helped or hindered employment goals.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-032",
+      "edition": "State Team",
+      "category": "Interagency Collaboration",
+      "prompt": "Tell us about interagency collaboration that's working well.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-033",
+      "edition": "State Team",
+      "category": "Interagency Collaboration",
+      "prompt": "What makes some cross-agency relationships more productive than others?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-034",
+      "edition": "State Team",
+      "category": "Interagency Collaboration",
+      "prompt": "What would seamless collaboration look like from the perspective of someone receiving services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-035",
+      "edition": "State Team",
+      "category": "Interagency Collaboration",
+      "prompt": "Where do you see collaboration breaking down?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-036",
+      "edition": "State Team",
+      "category": "Interagency Collaboration",
+      "prompt": "What would make it easier to work across agencies?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-037",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "How do you know when providers feel supported in employment work?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-038",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "What do providers tell you they need most?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-039",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "Describe a time when you felt like you were providing useful support to a provider.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-040",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "What support do providers need to increase employment focus?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-041",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "How are employment expectations communicated to providers?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-042",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "What's working well in provider relationships?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-043",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "What are providers telling you they need most for employment work?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-044",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "How do you know when providers feel supported versus when they're just complying?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-045",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "If you could create ideal conditions for provider success in employment, what would that look like?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-046",
+      "edition": "State Team",
+      "category": "Provider Capacity & Support",
+      "prompt": "What would you want to experiment with in provider support if resources weren't a constraint?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-047",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "What's something new you've tried in employment work lately?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-048",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "How does your system handle when new approaches don't work as expected?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-049",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "What would you experiment with if there were no consequences for failure?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-050",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "What new approaches is your team willing to try?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-051",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "How do you balance innovation with oversight requirements?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-052",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "What would help your team take more strategic risks?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-053",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "Tell us about something new you've tried in employment work lately. What did you learn?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-054",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "Describe a time when your team took a productive risk in employment work.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-055",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "What's an assumption about employment work that you or your team is ready to question?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-056",
+      "edition": "State Team",
+      "category": "Innovation & Risk-Taking",
+      "prompt": "If you could pilot anything in employment services, what would you want to try?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-057",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "How do you know when employment work is improving?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-058",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "What stories help you understand your impact?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-059",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "What questions about employment outcomes keep you curious?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-060",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "Tell us about a story that helps you understand your impact on employment outcomes.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-061",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "Describe a moment when you realized employment work was improving in your system.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-062",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "What data about employment outcomes tells you the most useful story about your system?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-063",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "How do you know when employment work is improving beyond just looking at numbers?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-064",
+      "edition": "State Team",
+      "category": "Measurement, Learning, and Impact",
+      "prompt": "What would you want to understand better about your employment system's impact?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-065",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "What part of your system feels most ready for growth or change?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-066",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "What assumptions are you or your team ready to question?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-067",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "What conversations do you want to be in next?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-068",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "What part of your employment system feels most ready for growth or change right now?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-069",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "What conversations about employment do you most want to be in next?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-070",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "If you could focus your employment efforts on just one area for the next year, where would you invest?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-071",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "Who do you want to be in deeper conversation with about employment work?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST-072",
+      "edition": "State Team",
+      "category": "Looking Ahead",
+      "prompt": "What partnerships around employment work are you most curious to explore?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SG-001",
+      "edition": "Self-Guided",
+      "category": "Vision & Strategic Goals",
+      "prompt": "What does employment success look like across our system?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-002",
+      "edition": "Self-Guided",
+      "category": "Vision & Strategic Goals",
+      "prompt": "How do different stakeholders experience our goals?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-003",
+      "edition": "Self-Guided",
+      "category": "Vision & Strategic Goals",
+      "prompt": "What adjustments might make our goals more inclusive and actionable?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-004",
+      "edition": "Self-Guided",
+      "category": "Leadership & Culture",
+      "prompt": "What behaviors or messages from leaders reinforce employment as a priority?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-005",
+      "edition": "Self-Guided",
+      "category": "Leadership & Culture",
+      "prompt": "Where do we see leadership driving momentum-or unintentionally slowing it?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-006",
+      "edition": "Self-Guided",
+      "category": "Leadership & Culture",
+      "prompt": "What kind of leadership do we want to model at all levels?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-007",
+      "edition": "Self-Guided",
+      "category": "Financing & Accountability",
+      "prompt": "What are our funding structures telling us we value?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-008",
+      "edition": "Self-Guided",
+      "category": "Financing & Accountability",
+      "prompt": "Where is there alignment or misalignment between funding and outcomes?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-009",
+      "edition": "Self-Guided",
+      "category": "Financing & Accountability",
+      "prompt": "What funding changes could better incentivize employment outcomes?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-010",
+      "edition": "Self-Guided",
+      "category": "Interagency Collaboration",
+      "prompt": "Which partnerships feel productive? Which feel stuck?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-011",
+      "edition": "Self-Guided",
+      "category": "Interagency Collaboration",
+      "prompt": "How do we create shared ownership across agencies?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-012",
+      "edition": "Self-Guided",
+      "category": "Interagency Collaboration",
+      "prompt": "What would seamless collaboration look like to someone receiving services?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-013",
+      "edition": "Self-Guided",
+      "category": "Provider Capacity & Innovation",
+      "prompt": "What are providers telling us they need to succeed?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-014",
+      "edition": "Self-Guided",
+      "category": "Provider Capacity & Innovation",
+      "prompt": "Where do we see innovation happening-and what enables it?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-015",
+      "edition": "Self-Guided",
+      "category": "Provider Capacity & Innovation",
+      "prompt": "How do we balance accountability with supporting provider creativity?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-016",
+      "edition": "Self-Guided",
+      "category": "Measurement & Learning",
+      "prompt": "What data really helps us understand our impact?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-017",
+      "edition": "Self-Guided",
+      "category": "Measurement & Learning",
+      "prompt": "How do we capture stories alongside statistics?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "SG-018",
+      "edition": "Self-Guided",
+      "category": "Measurement & Learning",
+      "prompt": "What are we learning about what works-and what doesn't?",
+      "type": "Core Question",
+      "notes": "For self-facilitated meetings"
+    },
+    {
+      "id": "PR-001",
+      "edition": "Provider",
+      "category": "Service Vision & Goals",
+      "prompt": "What are your organization's goals for employment services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-002",
+      "edition": "Provider",
+      "category": "Service Vision & Goals",
+      "prompt": "How do these goals align with what you're hearing from the state?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-003",
+      "edition": "Provider",
+      "category": "Service Vision & Goals",
+      "prompt": "What would success in employment services look like for your organization?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-004",
+      "edition": "Provider",
+      "category": "Leadership & Agency Support",
+      "prompt": "How does your leadership demonstrate commitment to employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-005",
+      "edition": "Provider",
+      "category": "Leadership & Agency Support",
+      "prompt": "What support from leadership would help you be more successful?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-006",
+      "edition": "Provider",
+      "category": "Leadership & Agency Support",
+      "prompt": "What messages about employment do you receive from your leadership?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-007",
+      "edition": "Provider",
+      "category": "Funding & Incentives",
+      "prompt": "How do current funding structures impact your employment services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-008",
+      "edition": "Provider",
+      "category": "Funding & Incentives",
+      "prompt": "What funding changes would help you serve people better?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-009",
+      "edition": "Provider",
+      "category": "Funding & Incentives",
+      "prompt": "What financial incentives or barriers affect your employment work?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-010",
+      "edition": "Provider",
+      "category": "Partnership with State Agencies",
+      "prompt": "What partnerships (e.g., with state agencies, VR, schools) are working well?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-011",
+      "edition": "Provider",
+      "category": "Partnership with State Agencies",
+      "prompt": "What collaboration challenges are you facing?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-012",
+      "edition": "Provider",
+      "category": "Partnership with State Agencies",
+      "prompt": "What would help build stronger system-wide alignment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-013",
+      "edition": "Provider",
+      "category": "Workforce & Capacity",
+      "prompt": "What are your staff doing well—and where do they need more support?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-014",
+      "edition": "Provider",
+      "category": "Workforce & Capacity",
+      "prompt": "What has worked well for hiring, onboarding, and training?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-015",
+      "edition": "Provider",
+      "category": "Workforce & Capacity",
+      "prompt": "Where do staff feel empowered—and where do they feel stuck?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-016",
+      "edition": "Provider",
+      "category": "Learning & Feedback",
+      "prompt": "How do you use data or feedback to improve your services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-017",
+      "edition": "Provider",
+      "category": "Learning & Feedback",
+      "prompt": "What stories or signals tell you that your services are making a difference?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "PR-018",
+      "edition": "Provider",
+      "category": "Learning & Feedback",
+      "prompt": "Where could the state do more to learn from providers?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "FI-001",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "What's working well with employment supports right now?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-002",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "What would make employment services better for you or your family member?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-003",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "Tell us about a time when you felt really supported in finding or keeping a job.",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-004",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "What do you wish service providers understood about your employment goals?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-005",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "Who has been most helpful in your employment journey?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-006",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "What information about employment would be most helpful to have?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-007",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "What barriers to employment feel biggest right now?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-008",
+      "edition": "Family & Individual",
+      "category": "Plain Language Reflection Questions",
+      "prompt": "If you could change one thing about employment services, what would it be?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-009",
+      "edition": "Family & Individual",
+      "category": "Listening Session Wrap-Up Prompts",
+      "prompt": "What's one thing you heard today that surprised you?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-010",
+      "edition": "Family & Individual",
+      "category": "Listening Session Wrap-Up Prompts",
+      "prompt": "What idea mentioned today do you want to learn more about?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-011",
+      "edition": "Family & Individual",
+      "category": "Listening Session Wrap-Up Prompts",
+      "prompt": "What story or example from today will stick with you?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "FI-012",
+      "edition": "Family & Individual",
+      "category": "Listening Session Wrap-Up Prompts",
+      "prompt": "What's one action you might take based on today's discussion?",
+      "type": "Core Question",
+      "notes": "Plain language version"
+    },
+    {
+      "id": "CM-001",
+      "edition": "Case Manager",
+      "category": "Advocacy and Expectations",
+      "prompt": "What helps you feel confident advocating for someone's employment goals?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-002",
+      "edition": "Case Manager",
+      "category": "Advocacy and Expectations",
+      "prompt": "What signals do you get-directly or indirectly-about the importance of employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-003",
+      "edition": "Case Manager",
+      "category": "Advocacy and Expectations",
+      "prompt": "What leadership or training supports make advocacy easier?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-004",
+      "edition": "Case Manager",
+      "category": "Advocacy and Expectations",
+      "prompt": "Where do you notice doubt about whether someone can work-and how do you respond?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-005",
+      "edition": "Case Manager",
+      "category": "Advocacy and Expectations",
+      "prompt": "Tell us about a time when you successfully advocated for someone's employment goals.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-006",
+      "edition": "Case Manager",
+      "category": "System Navigation",
+      "prompt": "What parts of interagency collaboration support you in your role?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-007",
+      "edition": "Case Manager",
+      "category": "System Navigation",
+      "prompt": "Where do timelines or planning expectations conflict across systems?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-008",
+      "edition": "Case Manager",
+      "category": "System Navigation",
+      "prompt": "How do you handle confusion or overlap in roles between DD, VR, or education?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-009",
+      "edition": "Case Manager",
+      "category": "System Navigation",
+      "prompt": "What would make system coordination easier or clearer?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-010",
+      "edition": "Case Manager",
+      "category": "Service Access and Planning",
+      "prompt": "How easy is it to authorize and explain employment services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-011",
+      "edition": "Case Manager",
+      "category": "Service Access and Planning",
+      "prompt": "What supports are available-but rarely used or understood?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-012",
+      "edition": "Case Manager",
+      "category": "Service Access and Planning",
+      "prompt": "When have you had to get creative to help someone pursue a job goal?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-013",
+      "edition": "Case Manager",
+      "category": "Service Access and Planning",
+      "prompt": "Tell us about a time when employment planning worked really well.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-014",
+      "edition": "Case Manager",
+      "category": "Cultural Expectations",
+      "prompt": "How do employment expectations vary across the people you support?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-015",
+      "edition": "Case Manager",
+      "category": "Cultural Expectations",
+      "prompt": "What messages about employment do families and individuals receive-and from whom?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-016",
+      "edition": "Case Manager",
+      "category": "Cultural Expectations",
+      "prompt": "Where do you see hope and belief in employment possibilities-and where is that missing?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-017",
+      "edition": "Case Manager",
+      "category": "Reflection and Feedback",
+      "prompt": "What feedback from individuals helps you improve your practice?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-018",
+      "edition": "Case Manager",
+      "category": "Reflection and Feedback",
+      "prompt": "How do you know when employment planning is really person-centered?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "CM-019",
+      "edition": "Case Manager",
+      "category": "Reflection and Feedback",
+      "prompt": "What questions about employment would you like to explore with other case managers?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-001",
+      "edition": "Waiver Manager",
+      "category": "Leadership",
+      "prompt": "How do employment goals show up in waiver design, guidance, or oversight priorities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-002",
+      "edition": "Waiver Manager",
+      "category": "Leadership",
+      "prompt": "What actions signal that employment is more than a stated value in our system?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-003",
+      "edition": "Waiver Manager",
+      "category": "Leadership",
+      "prompt": "Where might leadership decisions be unintentionally creating mixed messages about employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-004",
+      "edition": "Waiver Manager",
+      "category": "Funding & Resource Alignment",
+      "prompt": "How do current rate structures and funding mechanisms support or restrict CIE?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-005",
+      "edition": "Waiver Manager",
+      "category": "Funding & Resource Alignment",
+      "prompt": "Where do service definitions or payment rules create confusion or misalignment with goals?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-006",
+      "edition": "Waiver Manager",
+      "category": "Funding & Resource Alignment",
+      "prompt": "What strategies or changes could make employment-related funding more flexible and person-centered?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-007",
+      "edition": "Waiver Manager",
+      "category": "Staff Training & Capacity",
+      "prompt": "How are case managers and providers trained to support employment services under the waiver? Is it working?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-008",
+      "edition": "Waiver Manager",
+      "category": "Staff Training & Capacity",
+      "prompt": "What capacity gaps are most visible-and how are we responding?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-009",
+      "edition": "Waiver Manager",
+      "category": "Staff Training & Capacity",
+      "prompt": "What policies or incentives help grow the employment service workforce?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-010",
+      "edition": "Waiver Manager",
+      "category": "Cultural Expectations",
+      "prompt": "What expectations about employment are embedded in waiver language, forms, or guidance?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-011",
+      "edition": "Waiver Manager",
+      "category": "Cultural Expectations",
+      "prompt": "Where do we unintentionally reinforce old assumptions or limiting practices?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-012",
+      "edition": "Waiver Manager",
+      "category": "Cultural Expectations",
+      "prompt": "What actions can help shift the system toward higher expectations for everyone?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-013",
+      "edition": "Waiver Manager",
+      "category": "Family & Individual Engagement",
+      "prompt": "How are individuals and families included in shaping waiver services and revisions?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-014",
+      "edition": "Waiver Manager",
+      "category": "Family & Individual Engagement",
+      "prompt": "What supports help families understand employment options and believe it's possible?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-015",
+      "edition": "Waiver Manager",
+      "category": "Family & Individual Engagement",
+      "prompt": "Where do people feel like they have real choices-and where is that missing?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-016",
+      "edition": "Waiver Manager",
+      "category": "Outcome Tracking",
+      "prompt": "What employment data are we collecting from waiver participants-and how do we use it?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-017",
+      "edition": "Waiver Manager",
+      "category": "Outcome Tracking",
+      "prompt": "How is that data shared across agencies or levels of leadership?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "WM-018",
+      "edition": "Waiver Manager",
+      "category": "Outcome Tracking",
+      "prompt": "What's missing in our ability to understand waiver impact on real employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-001",
+      "edition": "School Transition",
+      "category": "Transition Planning & Coordination",
+      "prompt": "Tell us about a transition plan that led to great employment outcomes. What made that planning different?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-002",
+      "edition": "School Transition",
+      "category": "Transition Planning & Coordination",
+      "prompt": "Describe a moment when you felt like transition planning really clicked for a student and family.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-003",
+      "edition": "School Transition",
+      "category": "Transition Planning & Coordination",
+      "prompt": "How do you know when transition planning is preparing someone for employment versus meeting compliance?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-004",
+      "edition": "School Transition",
+      "category": "Transition Planning & Coordination",
+      "prompt": "What are you learning about what makes transition planning most effective for employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-005",
+      "edition": "School Transition",
+      "category": "Transition Planning & Coordination",
+      "prompt": "What would seamless transition coordination look like from a student and family perspective?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-006",
+      "edition": "School Transition",
+      "category": "Transition Planning & Coordination",
+      "prompt": "If you could redesign transition planning to optimize for employment outcomes, what would change?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-007",
+      "edition": "School Transition",
+      "category": "Employer & Community Connections",
+      "prompt": "Tell us about your most successful employer partnership for student employment.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-008",
+      "edition": "School Transition",
+      "category": "Employer & Community Connections",
+      "prompt": "Describe a time when a community connection really opened doors for student employment.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-009",
+      "edition": "School Transition",
+      "category": "Employer & Community Connections",
+      "prompt": "What makes some employer relationships more productive for student employment than others?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-010",
+      "edition": "School Transition",
+      "category": "Employer & Community Connections",
+      "prompt": "Who in your community has been most valuable for creating employment opportunities for students?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-011",
+      "edition": "School Transition",
+      "category": "Employer & Community Connections",
+      "prompt": "What would you want employers to understand about hiring students with disabilities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-012",
+      "edition": "School Transition",
+      "category": "Employer & Community Connections",
+      "prompt": "How could schools better connect students to real employment opportunities in their communities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-013",
+      "edition": "School Transition",
+      "category": "Skills & Preparation",
+      "prompt": "Tell us about a student who surprised you with their employment success. What supports made that possible?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-014",
+      "edition": "School Transition",
+      "category": "Skills & Preparation",
+      "prompt": "Describe a moment when you saw a student's confidence about employment really grow.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-015",
+      "edition": "School Transition",
+      "category": "Skills & Preparation",
+      "prompt": "How do you balance academic requirements with employment preparation in transition planning?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-016",
+      "edition": "School Transition",
+      "category": "Skills & Preparation",
+      "prompt": "What employment-related skills do you see students needing most as they leave school?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-017",
+      "edition": "School Transition",
+      "category": "Skills & Preparation",
+      "prompt": "If you could design ideal employment preparation within schools, what would that look like?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "ST2-018",
+      "edition": "School Transition",
+      "category": "Skills & Preparation",
+      "prompt": "What would you want to experiment with in preparing students for employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-001",
+      "edition": "VR Partnership",
+      "category": "Service Coordination & Roles",
+      "prompt": "Tell us about a time when VR and IDD services worked together really well for someone.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-002",
+      "edition": "VR Partnership",
+      "category": "Service Coordination & Roles",
+      "prompt": "Describe your best experience with cross-agency service planning for employment.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-003",
+      "edition": "VR Partnership",
+      "category": "Service Coordination & Roles",
+      "prompt": "How do you navigate different agency priorities when planning employment services together?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-004",
+      "edition": "VR Partnership",
+      "category": "Service Coordination & Roles",
+      "prompt": "What would ideal service coordination look like from the person receiving services' perspective?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-005",
+      "edition": "VR Partnership",
+      "category": "Service Coordination & Roles",
+      "prompt": "What are you learning about when VR-IDD partnerships work best versus when they struggle?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-006",
+      "edition": "VR Partnership",
+      "category": "Service Coordination & Roles",
+      "prompt": "How do you determine which agency should take the lead on different aspects of employment support?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-007",
+      "edition": "VR Partnership",
+      "category": "Resource Alignment & Funding",
+      "prompt": "Tell us about a situation where VR and IDD funding complemented each other well for employment.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-008",
+      "edition": "VR Partnership",
+      "category": "Resource Alignment & Funding",
+      "prompt": "Describe a creative funding solution you've seen that really supported someone's employment goals.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-009",
+      "edition": "VR Partnership",
+      "category": "Resource Alignment & Funding",
+      "prompt": "What funding coordination challenges most affect employment service quality?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-010",
+      "edition": "VR Partnership",
+      "category": "Resource Alignment & Funding",
+      "prompt": "How do you work through conflicts when agencies have different funding timelines or requirements?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-011",
+      "edition": "VR Partnership",
+      "category": "Resource Alignment & Funding",
+      "prompt": "If you could redesign how VR and IDD funding work together, what would you change?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-012",
+      "edition": "VR Partnership",
+      "category": "Resource Alignment & Funding",
+      "prompt": "What would seamless resource coordination look like for employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-013",
+      "edition": "VR Partnership",
+      "category": "Employer Relationships & Job Development",
+      "prompt": "Tell us about your most successful employer partnership.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-014",
+      "edition": "VR Partnership",
+      "category": "Employer Relationships & Job Development",
+      "prompt": "Describe a job development success that involved both VR and IDD services.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-015",
+      "edition": "VR Partnership",
+      "category": "Employer Relationships & Job Development",
+      "prompt": "How do you balance individual needs with employer expectations in job development?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-016",
+      "edition": "VR Partnership",
+      "category": "Employer Relationships & Job Development",
+      "prompt": "What makes some employer relationships more productive for people with complex support needs?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-017",
+      "edition": "VR Partnership",
+      "category": "Employer Relationships & Job Development",
+      "prompt": "What would you want employers to know about working with both VR and IDD services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "VR-018",
+      "edition": "VR Partnership",
+      "category": "Employer Relationships & Job Development",
+      "prompt": "How could VR and IDD agencies better support each other in employer relationships?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-001",
+      "edition": "Quality & Compliance",
+      "category": "Measuring What Matters",
+      "prompt": "Tell us about a quality measure that really captures good employment outcomes.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-002",
+      "edition": "Quality & Compliance",
+      "category": "Measuring What Matters",
+      "prompt": "Describe a time when data helped you understand employment service quality in a new way.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-003",
+      "edition": "Quality & Compliance",
+      "category": "Measuring What Matters",
+      "prompt": "How do you balance compliance requirements with supporting innovation in employment services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-004",
+      "edition": "Quality & Compliance",
+      "category": "Measuring What Matters",
+      "prompt": "What would quality employment services look like from the perspective of someone receiving them?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-005",
+      "edition": "Quality & Compliance",
+      "category": "Measuring What Matters",
+      "prompt": "What are you learning about which quality measures actually drive improvements?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-006",
+      "edition": "Quality & Compliance",
+      "category": "Measuring What Matters",
+      "prompt": "How do you know when your oversight is helping versus hindering employment service quality?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-007",
+      "edition": "Quality & Compliance",
+      "category": "Provider Oversight & Support",
+      "prompt": "Tell us about your most effective interaction with a provider about employment quality.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-008",
+      "edition": "Quality & Compliance",
+      "category": "Provider Oversight & Support",
+      "prompt": "Describe a time when your oversight or feedback really helped a provider improve employment outcomes.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-009",
+      "edition": "Quality & Compliance",
+      "category": "Provider Oversight & Support",
+      "prompt": "How do you distinguish between compliance issues and opportunities for improvement?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-010",
+      "edition": "Quality & Compliance",
+      "category": "Provider Oversight & Support",
+      "prompt": "What kind of oversight relationship actually helps providers deliver better employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-011",
+      "edition": "Quality & Compliance",
+      "category": "Provider Oversight & Support",
+      "prompt": "What would supportive accountability look like for employment service providers?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-012",
+      "edition": "Quality & Compliance",
+      "category": "Provider Oversight & Support",
+      "prompt": "How could quality oversight better support providers in achieving employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-013",
+      "edition": "Quality & Compliance",
+      "category": "System Learning & Improvement",
+      "prompt": "Tell us about a time when quality data led to meaningful improvements in employment services.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-014",
+      "edition": "Quality & Compliance",
+      "category": "System Learning & Improvement",
+      "prompt": "Describe a system-level change that improved employment outcomes. How did quality information contribute?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-015",
+      "edition": "Quality & Compliance",
+      "category": "System Learning & Improvement",
+      "prompt": "How do you use compliance information to support system-wide learning about employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-016",
+      "edition": "Quality & Compliance",
+      "category": "System Learning & Improvement",
+      "prompt": "What would continuous quality improvement look like for employment services in your state?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-017",
+      "edition": "Quality & Compliance",
+      "category": "System Learning & Improvement",
+      "prompt": "If you could redesign quality oversight to optimize for employment outcomes, what would change?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "QC-018",
+      "edition": "Quality & Compliance",
+      "category": "System Learning & Improvement",
+      "prompt": "What would you want to experiment with in quality assurance if you could try anything?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-001",
+      "edition": "Self-Advocate",
+      "category": "Lived Experience & Expertise",
+      "prompt": "Tell us about your experience with employment services. What worked well, and what would you change?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-002",
+      "edition": "Self-Advocate",
+      "category": "Lived Experience & Expertise",
+      "prompt": "Describe a moment when you felt like your voice and experience were really valued in employment planning.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-003",
+      "edition": "Self-Advocate",
+      "category": "Lived Experience & Expertise",
+      "prompt": "What do people need to understand about your experience with employment that they might not realize?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-004",
+      "edition": "Self-Advocate",
+      "category": "Lived Experience & Expertise",
+      "prompt": "How do you want to be involved in improving employment services for other people with disabilities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-005",
+      "edition": "Self-Advocate",
+      "category": "Lived Experience & Expertise",
+      "prompt": "What changes in employment systems would make the biggest difference for people with disabilities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-006",
+      "edition": "Self-Advocate",
+      "category": "Lived Experience & Expertise",
+      "prompt": "What would you want service providers and agencies to know about employment from your perspective?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-007",
+      "edition": "Self-Advocate",
+      "category": "Systems Change & Advocacy",
+      "prompt": "Tell us about a time when your voice made a difference in employment services or policy.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-008",
+      "edition": "Self-Advocate",
+      "category": "Systems Change & Advocacy",
+      "prompt": "Describe your most effective advocacy experience around employment. What made that successful?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-009",
+      "edition": "Self-Advocate",
+      "category": "Systems Change & Advocacy",
+      "prompt": "How can employment services better include people with disabilities in decision-making?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-010",
+      "edition": "Self-Advocate",
+      "category": "Systems Change & Advocacy",
+      "prompt": "What would meaningful inclusion of self-advocates look like in employment system planning?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-011",
+      "edition": "Self-Advocate",
+      "category": "Systems Change & Advocacy",
+      "prompt": "What would you change about employment services if you had the power to make those decisions?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-012",
+      "edition": "Self-Advocate",
+      "category": "Systems Change & Advocacy",
+      "prompt": "How can self-advocates be better supported to influence employment policy and practice?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-013",
+      "edition": "Self-Advocate",
+      "category": "Peer Support & Leadership",
+      "prompt": "Tell us about a time when you supported another person with disabilities around employment.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-014",
+      "edition": "Self-Advocate",
+      "category": "Peer Support & Leadership",
+      "prompt": "Describe a leadership role you've taken or want to take in employment work.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-015",
+      "edition": "Self-Advocate",
+      "category": "Peer Support & Leadership",
+      "prompt": "What role do you want to play in employment systems in your community?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-016",
+      "edition": "Self-Advocate",
+      "category": "Peer Support & Leadership",
+      "prompt": "How can self-advocates better support each other around employment goals and experiences?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-017",
+      "edition": "Self-Advocate",
+      "category": "Peer Support & Leadership",
+      "prompt": "What would peer support around employment look like if designed by and for people with disabilities?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "SA-018",
+      "edition": "Self-Advocate",
+      "category": "Peer Support & Leadership",
+      "prompt": "What leadership opportunities around employment would you like to see created?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-001",
+      "edition": "Executive Leadership",
+      "category": "Vision & Strategic Investment",
+      "prompt": "Tell us about a strategic decision that significantly advanced employment outcomes in your state.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-002",
+      "edition": "Executive Leadership",
+      "category": "Vision & Strategic Investment",
+      "prompt": "Describe a moment when employment work felt most aligned with your agency's broader mission and impact.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-003",
+      "edition": "Executive Leadership",
+      "category": "Vision & Strategic Investment",
+      "prompt": "What does success in employment look like at the scale you're thinking about?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-004",
+      "edition": "Executive Leadership",
+      "category": "Vision & Strategic Investment",
+      "prompt": "If employment outcomes became a primary measure of your agency's impact, how would that change your approach?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-005",
+      "edition": "Executive Leadership",
+      "category": "Vision & Strategic Investment",
+      "prompt": "Where are you investing in employment transformation versus compliance?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-006",
+      "edition": "Executive Leadership",
+      "category": "Vision & Strategic Investment",
+      "prompt": "What investment would make the biggest difference for employment outcomes?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-007",
+      "edition": "Executive Leadership",
+      "category": "Cross-System Alignment",
+      "prompt": "Where is cross-agency alignment strongest on employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-008",
+      "edition": "Executive Leadership",
+      "category": "Cross-System Alignment",
+      "prompt": "Tell us about a time when agencies worked together exceptionally well for employment outcomes.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-009",
+      "edition": "Executive Leadership",
+      "category": "Cross-System Alignment",
+      "prompt": "What would make collaboration across systems more effective?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-010",
+      "edition": "Executive Leadership",
+      "category": "Cross-System Alignment",
+      "prompt": "How do you balance competing priorities across agencies when it comes to employment?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-011",
+      "edition": "Executive Leadership",
+      "category": "Cross-System Alignment",
+      "prompt": "What cross-agency barriers most affect employment outcomes at a system level?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-012",
+      "edition": "Executive Leadership",
+      "category": "Leadership Culture",
+      "prompt": "What does your leadership team model about employment expectations?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-013",
+      "edition": "Executive Leadership",
+      "category": "Leadership Culture",
+      "prompt": "Tell us about a time when leadership took a meaningful risk to advance employment goals.",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-014",
+      "edition": "Executive Leadership",
+      "category": "Leadership Culture",
+      "prompt": "What leadership culture changes would most support employment transformation?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-015",
+      "edition": "Executive Leadership",
+      "category": "Leadership Culture",
+      "prompt": "How do you create psychological safety for innovation in employment services?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "EL-016",
+      "edition": "Executive Leadership",
+      "category": "Leadership Culture",
+      "prompt": "What messages from leadership most influence employment outcomes across your system?",
+      "type": "Core Question",
+      "notes": ""
+    },
+    {
+      "id": "FT-001",
+      "edition": "Facilitator Tools",
+      "category": "Session Openers",
+      "prompt": "Tell us about a recent employment success that surprised you. What made it work, and who was part of making it happen?",
+      "type": "Opener",
+      "notes": "For High Trust/Established Group"
+    },
+    {
+      "id": "FT-002",
+      "edition": "Facilitator Tools",
+      "category": "Session Openers",
+      "prompt": "Think about your recent work on employment. What's one thing that's going well that you'd like others to know about?",
+      "type": "Opener",
+      "notes": "For New/Cautious Group"
+    },
+    {
+      "id": "FT-003",
+      "edition": "Facilitator Tools",
+      "category": "Session Openers",
+      "prompt": "Each role sees employment work differently. Let's start with what each of you is noticing from your unique vantage point.",
+      "type": "Opener",
+      "notes": "For Mixed Audience Session"
+    },
+    {
+      "id": "FT-004",
+      "edition": "Facilitator Tools",
+      "category": "Session Openers",
+      "prompt": "We have limited time, so let's focus on the most important insights. What's the one thing about employment work you most want this group to understand?",
+      "type": "Opener",
+      "notes": "For Time-Constrained Session"
+    },
+    {
+      "id": "FT-005",
+      "edition": "Facilitator Tools",
+      "category": "Session Closings",
+      "prompt": "Based on what we've heard today, what's one thing you want to try or explore further?",
+      "type": "Closing",
+      "notes": "For Action-Oriented Groups"
+    },
+    {
+      "id": "FT-006",
+      "edition": "Facilitator Tools",
+      "category": "Session Closings",
+      "prompt": "What's one insight from today you want to hold onto?",
+      "type": "Closing",
+      "notes": "For Learning-Focused Groups"
+    },
+    {
+      "id": "FT-007",
+      "edition": "Facilitator Tools",
+      "category": "Session Closings",
+      "prompt": "Who is someone you want to connect with based on today's conversation?",
+      "type": "Closing",
+      "notes": "For Relationship-Building Groups"
+    },
+    {
+      "id": "FT-008",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "What made that work?",
+      "type": "Follow-up",
+      "notes": "After Success Stories"
+    },
+    {
+      "id": "FT-009",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "Who else was involved in making that happen?",
+      "type": "Follow-up",
+      "notes": "After Success Stories"
+    },
+    {
+      "id": "FT-010",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "What conditions supported that success?",
+      "type": "Follow-up",
+      "notes": "After Success Stories"
+    },
+    {
+      "id": "FT-011",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "What would support have looked like in that situation?",
+      "type": "Follow-up",
+      "notes": "After Challenge Stories"
+    },
+    {
+      "id": "FT-012",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "Who would be helpful to have in conversations about this?",
+      "type": "Follow-up",
+      "notes": "After Challenge Stories"
+    },
+    {
+      "id": "FT-013",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "What would you try if you could experiment without consequences?",
+      "type": "Follow-up",
+      "notes": "After Challenge Stories"
+    },
+    {
+      "id": "FT-014",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "What questions does that raise for you?",
+      "type": "Follow-up",
+      "notes": "After Learning/Insight Moments"
+    },
+    {
+      "id": "FT-015",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "How might that apply to other situations?",
+      "type": "Follow-up",
+      "notes": "After Learning/Insight Moments"
+    },
+    {
+      "id": "FT-016",
+      "edition": "Facilitator Tools",
+      "category": "Follow-up Questions",
+      "prompt": "What would you want to explore more about that?",
+      "type": "Follow-up",
+      "notes": "After Learning/Insight Moments"
+    }
+  ]
+}

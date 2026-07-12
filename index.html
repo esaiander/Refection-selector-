@@ -1,0 +1,1924 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SELN Prompt Studio</title>
+<style>
+/* SELN Prompt Studio — design tokens + layout */
+
+:root {
+  --paper: #F5F4EE;
+  --card: #FFFFFF;
+  --ink: #20302C;
+  --mute: #5E6E69;
+  --line: #DCDAD0;
+  --accent: #0E6E5C;
+  --accent-strong: #0A5546;
+  --accent-soft: rgba(14, 110, 92, 0.09);
+  --amber: #B0641C;
+  --danger: #A6432C;
+  --shadow: 0 1px 2px rgba(32, 48, 44, 0.06), 0 6px 20px rgba(32, 48, 44, 0.05);
+  --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #141917;
+    --card: #1D2523;
+    --ink: #E6ECE9;
+    --mute: #93A39D;
+    --line: #303B37;
+    --accent: #4FBFA4;
+    --accent-strong: #79D3BC;
+    --accent-soft: rgba(79, 191, 164, 0.13);
+    --amber: #D89A5A;
+    --danger: #D97F66;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 20px rgba(0, 0, 0, 0.28);
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #141917;
+  --card: #1D2523;
+  --ink: #E6ECE9;
+  --mute: #93A39D;
+  --line: #303B37;
+  --accent: #4FBFA4;
+  --accent-strong: #79D3BC;
+  --accent-soft: rgba(79, 191, 164, 0.13);
+  --amber: #D89A5A;
+  --danger: #D97F66;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 20px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme="light"] {
+  --paper: #F5F4EE;
+  --card: #FFFFFF;
+  --ink: #20302C;
+  --mute: #5E6E69;
+  --line: #DCDAD0;
+  --accent: #0E6E5C;
+  --accent-strong: #0A5546;
+  --accent-soft: rgba(14, 110, 92, 0.09);
+  --amber: #B0641C;
+  --danger: #A6432C;
+  --shadow: 0 1px 2px rgba(32, 48, 44, 0.06), 0 6px 20px rgba(32, 48, 44, 0.05);
+}
+
+* { box-sizing: border-box; }
+
+/* keep the hidden attribute authoritative even when a rule sets display */
+[hidden] { display: none !important; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+.shell { max-width: 1120px; margin: 0 auto; padding: 0 16px 96px; }
+
+/* ---------- header + tabs ---------- */
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 22px 2px 14px;
+}
+
+.brand-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand-name em { font-style: italic; font-weight: 400; color: var(--accent-strong); }
+
+.brand-sub { font-size: 12.5px; color: var(--mute); margin-top: 2px; }
+
+.count-pill {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+.count-pill.has-items { border-color: var(--accent); color: var(--accent-strong); }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+
+.tab {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--mute);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+
+.tab:hover { color: var(--ink); }
+
+.tab.is-active { color: var(--accent-strong); border-bottom-color: var(--accent); }
+
+.tab-count {
+  display: inline-block;
+  min-width: 20px;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11.5px;
+  line-height: 20px;
+  text-align: center;
+}
+
+:root[data-theme="dark"] .tab-count { color: #10201B; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tab-count { color: #10201B; } }
+
+/* ---------- shared controls ---------- */
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn:hover { border-color: var(--accent); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+:root[data-theme="dark"] .btn-primary { color: #10201B; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn-primary { color: #10201B; } }
+
+.btn-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+
+.btn-ghost { border-color: transparent; background: none; color: var(--accent-strong); }
+
+.btn-danger-ghost { border-color: transparent; background: none; color: var(--danger); }
+
+.btn-big { padding: 12px 22px; font-size: 15px; }
+
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.icon-btn { padding: 6px 10px; line-height: 1; }
+
+.select {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13.5px;
+}
+
+.view-title { font-family: var(--serif); font-size: 24px; margin: 4px 0 2px; }
+
+.view-sub { color: var(--mute); font-size: 13.5px; margin: 0 0 16px; }
+
+/* ---------- library controls ---------- */
+
+.search {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  box-shadow: var(--shadow);
+}
+
+.search::placeholder { color: var(--mute); }
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.sort-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--mute);
+  font-weight: 600;
+}
+
+.mini-count {
+  display: inline-block;
+  margin-left: 6px;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--amber);
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 2px 4px;
+  scrollbar-width: thin;
+}
+
+.chip {
+  --ed: var(--mute);
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--mute);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.chip.is-on {
+  background: color-mix(in srgb, var(--ed) 16%, var(--card));
+  border-color: color-mix(in srgb, var(--ed) 55%, var(--card));
+  color: color-mix(in srgb, var(--ed) 62%, var(--ink));
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 8px 0 12px;
+}
+
+.result-count { font-size: 13px; color: var(--mute); font-variant-numeric: tabular-nums; }
+
+/* ---------- prompt cards ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 12px;
+}
+
+.pcard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow);
+}
+
+.pcard.is-selected { border-color: var(--accent); }
+
+.pcard-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  --ed: var(--mute);
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--ed) 15%, var(--card));
+  color: color-mix(in srgb, var(--ed) 62%, var(--ink));
+}
+
+.ttag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.pid { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--mute); }
+
+.pcard-cat { font-size: 12px; color: var(--mute); }
+
+.pcard-text {
+  font-family: var(--serif);
+  font-size: 16.5px;
+  line-height: 1.45;
+  margin: 0;
+  flex: 1;
+}
+
+.pcard-note { font-size: 12.5px; font-style: italic; color: var(--mute); margin: 0; }
+
+.pcard-foot { display: flex; justify-content: flex-end; }
+
+.add-btn { min-width: 90px; }
+
+.add-btn.is-added {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.lib-empty { color: var(--mute); padding: 40px 8px; text-align: center; grid-column: 1 / -1; }
+
+/* ---------- My Set ---------- */
+
+.empty {
+  background: var(--card);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 36px 20px;
+  text-align: center;
+}
+
+.empty p { margin: 0 0 8px; font-weight: 600; }
+
+.empty .empty-sub { font-weight: 400; color: var(--mute); font-size: 13.5px; max-width: 46ch; margin: 0 auto 16px; }
+
+.set-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.set-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+}
+
+.set-item.dragging { opacity: 0.5; }
+
+.item-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.drag-handle { cursor: grab; color: var(--mute); font-size: 15px; padding: 0 2px; user-select: none; touch-action: none; }
+
+.item-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  min-width: 22px;
+}
+
+.item-text {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.45;
+  margin: 8px 0 4px;
+}
+
+.item-srcnote { font-size: 12.5px; font-style: italic; color: var(--mute); margin: 0 0 6px; }
+
+.item-note {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 7px 10px;
+  font-size: 13px;
+  margin-top: 4px;
+  resize: vertical;
+  min-height: 34px;
+}
+
+.item-note::placeholder { color: var(--mute); }
+
+.item-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+.item-actions .btn { padding: 5px 10px; font-size: 12.5px; }
+
+.item-edit { margin-top: 8px; }
+
+.item-edit textarea {
+  width: 100%;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 8px 10px;
+  font-family: var(--serif);
+  font-size: 15px;
+  min-height: 72px;
+  resize: vertical;
+}
+
+.form-row { display: flex; gap: 8px; margin-top: 10px; }
+
+.set-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+.custom-form {
+  background: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+/* ---------- forms / export ---------- */
+
+.fld { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; flex: 1; }
+
+.fld > span {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.fld input, .fld textarea, .fld select {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 9px 11px;
+  font-size: 14px;
+}
+
+.fld-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 0;
+  box-shadow: var(--shadow);
+}
+
+.panel legend {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 0 6px;
+}
+
+.formats { display: flex; flex-direction: column; gap: 8px; }
+
+.format {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.format:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+
+.format input { grid-row: 1 / 3; accent-color: var(--accent); }
+
+.format b { font-size: 14px; }
+
+.format span { grid-column: 2; font-size: 12.5px; color: var(--mute); }
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.check input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+.agenda-opts { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 12px; }
+
+.export-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.export-hint { font-size: 12.5px; color: var(--mute); }
+
+/* ---------- filter sheet ---------- */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 26, 24, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 60;
+}
+
+.sheet {
+  background: var(--card);
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+}
+
+@media (min-width: 700px) {
+  .sheet-backdrop { align-items: center; }
+  .sheet { border-radius: 16px; max-height: 80vh; }
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sheet-head b { font-size: 16px; margin-right: auto; }
+
+.sheet-body { overflow-y: auto; padding: 8px 18px 14px; }
+
+.sheet-foot { padding: 12px 18px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
+
+.fgroup h3 {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 14px 0 6px;
+}
+
+.fgroup .hint { text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+.checks { display: flex; flex-direction: column; }
+
+.checks .check { padding: 4px 0; }
+
+.checks-scroll { max-height: 220px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 80;
+  max-width: 90vw;
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- mobile: bottom tab bar ---------- */
+
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+
+  .shell { padding-bottom: 120px; }
+
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    justify-content: space-around;
+    box-shadow: 0 -4px 16px rgba(20, 30, 27, 0.08);
+  }
+
+  .tab { border-bottom: 0; border-radius: 8px; padding: 9px 12px; flex: 1; text-align: center; }
+
+  .tab.is-active { background: var(--accent-soft); }
+
+  .cards { grid-template-columns: 1fr; }
+
+  .brand-name { font-size: 22px; }
+
+  .toast { bottom: calc(76px + env(safe-area-inset-bottom)); }
+}
+
+/* ---------- print (PDF export) ---------- */
+
+.print-root { display: none; }
+
+@media print {
+  body > .shell > *:not(.print-root), .toast, .sheet-backdrop { display: none !important; }
+
+  body { background: #fff; color: #20302C; }
+
+  .print-root {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11.5pt;
+    line-height: 1.45;
+    color: #20302C;
+  }
+
+  .print-root p { margin: 0 0 6pt 0; }
+  .print-root .xp-kicker { font-family: Arial, sans-serif; font-size: 9pt; letter-spacing: 1.5pt; color: #0E6E5C; font-weight: bold; text-transform: uppercase; margin: 0 0 10pt 0; }
+  .print-root .xp-title { font-size: 26pt; font-weight: bold; margin: 0 0 8pt 0; line-height: 1.15; }
+  .print-root .xp-subtitle { font-size: 13pt; color: #5E6E69; margin: 0 0 6pt 0; }
+  .print-root .xp-covermeta { font-family: Arial, sans-serif; font-size: 9.5pt; color: #5E6E69; margin: 14pt 0 0 0; }
+  .print-root .xp-cover { border-bottom: 2.25pt solid #0E6E5C; padding-bottom: 18pt; margin-bottom: 24pt; }
+  .print-root .xp-cat { font-size: 15pt; font-weight: bold; color: #0E6E5C; border-bottom: 1pt solid #C9C7BC; padding-bottom: 4pt; margin: 22pt 0 12pt 0; }
+  .print-root .xp-item { margin: 0 0 16pt 0; break-inside: avoid; }
+  .print-root .xp-q { font-size: 12.5pt; margin: 0 0 4pt 0; }
+  .print-root .xp-qnum { font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold; color: #0E6E5C; }
+  .print-root .xp-meta { font-family: Arial, sans-serif; font-size: 8.5pt; color: #5E6E69; letter-spacing: 0.4pt; margin: 0 0 3pt 0; }
+  .print-root .xp-note { font-size: 10.5pt; font-style: italic; color: #5E6E69; margin: 0 0 3pt 0; }
+  .print-root .xp-line { border-bottom: 1pt solid #C9C7BC; margin: 0 0 14pt 0; font-size: 10pt; }
+  .print-root .xp-break { page-break-before: always; }
+  .print-root table.xp-agenda { border-collapse: collapse; width: 100%; font-size: 11pt; }
+  .print-root table.xp-agenda th { font-family: Arial, sans-serif; font-size: 9pt; letter-spacing: 1pt; text-transform: uppercase; color: #5E6E69; text-align: left; border-bottom: 2.25pt solid #0E6E5C; padding: 6pt 10pt 6pt 0; }
+  .print-root table.xp-agenda td { border-bottom: 1pt solid #C9C7BC; padding: 9pt 10pt 9pt 0; vertical-align: top; }
+  .print-root td.xp-time { white-space: nowrap; font-family: Arial, sans-serif; font-size: 10pt; color: #0E6E5C; font-weight: bold; width: 70pt; }
+  .print-root td.xp-min { white-space: nowrap; font-family: Arial, sans-serif; font-size: 10pt; color: #5E6E69; width: 45pt; }
+}
+
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-name">SELN <em>Prompt Studio</em></div>
+      <div class="brand-sub">Strategic Reflection Guide v.17 · 261 prompts · 12 editions</div>
+    </div>
+    <button class="count-pill" id="countPill" type="button" title="Open My Set">0 selected</button>
+  </header>
+
+  <nav class="tabs" aria-label="Views" id="tabs">
+    <button type="button" class="tab is-active" data-view="library">Library</button>
+    <button type="button" class="tab" data-view="set">My Set<span class="tab-count" id="navCount" hidden>0</span></button>
+    <button type="button" class="tab" data-view="export">Export</button>
+  </nav>
+
+  <main>
+    <section id="view-library" class="view">
+      <input id="q" class="search" type="search" placeholder="Search prompts, categories, or IDs…" aria-label="Search prompts">
+      <div class="control-row">
+        <button type="button" class="btn" id="filtersBtn">Filters<span class="mini-count" id="filterCount" hidden>0</span></button>
+        <label class="sort-label">Sort
+          <select id="sort" class="select">
+            <option value="guide">Guide order</option>
+            <option value="az">A → Z</option>
+            <option value="category">Category</option>
+            <option value="type">Type</option>
+            <option value="edition">Edition</option>
+          </select>
+        </label>
+      </div>
+      <div class="chips" id="edChips" role="group" aria-label="Filter by edition"></div>
+      <div class="result-row">
+        <span class="result-count" id="resultCount"></span>
+        <button type="button" class="btn btn-ghost" id="addAllBtn">Add all shown</button>
+      </div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section id="view-set" class="view" hidden>
+      <h2 class="view-title">My Set</h2>
+      <p class="view-sub" id="setSummary">Arrange, edit, and annotate your selected prompts.</p>
+      <div class="empty" id="setEmpty">
+        <p>No prompts selected yet.</p>
+        <p class="empty-sub">Browse the library and tap <b>Add</b> on any prompt — then come back here to arrange, edit, and annotate your set before exporting.</p>
+        <button type="button" class="btn btn-primary" data-goto="library">Browse the library</button>
+      </div>
+      <ol class="set-list" id="setList"></ol>
+      <div class="set-actions" id="setActions" hidden>
+        <button type="button" class="btn" id="addCustomBtn">+ Custom prompt</button>
+        <button type="button" class="btn btn-danger-ghost" id="clearBtn">Clear all</button>
+        <button type="button" class="btn btn-primary" data-goto="export">Continue to export →</button>
+      </div>
+      <form class="custom-form" id="customForm" hidden>
+        <label class="fld"><span>Prompt text</span>
+          <textarea id="customText" rows="3" placeholder="Write your own reflection prompt…"></textarea>
+        </label>
+        <label class="fld"><span>Category label (optional)</span>
+          <input id="customCat" type="text" placeholder="e.g. Local Priorities">
+        </label>
+        <div class="form-row">
+          <button type="submit" class="btn btn-primary">Add to set</button>
+          <button type="button" class="btn" id="customCancel">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="view-export" class="view" hidden>
+      <h2 class="view-title">Export</h2>
+      <p class="view-sub" id="exportSummary"></p>
+      <div class="export-grid">
+        <fieldset class="panel">
+          <legend>Document details</legend>
+          <label class="fld"><span>Title</span><input id="docTitle" placeholder="SELN Reflection Session"></label>
+          <label class="fld"><span>Subtitle / occasion</span><input id="docSubtitle" placeholder="e.g. Quarterly provider convening"></label>
+          <div class="fld-row">
+            <label class="fld"><span>Facilitator</span><input id="docFacilitator" placeholder="Optional"></label>
+            <label class="fld"><span>Organization</span><input id="docOrg" placeholder="Optional"></label>
+          </div>
+          <label class="fld"><span>Date</span><input id="docDate" type="date"></label>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Format</legend>
+          <div class="formats" id="formats">
+            <label class="format"><input type="radio" name="fmt" value="word" checked><b>Word document</b><span>.doc — discussion guide with optional writing space</span></label>
+            <label class="format"><input type="radio" name="fmt" value="pptx"><b>PowerPoint deck</b><span>.pptx — title slide plus one slide per prompt</span></label>
+            <label class="format"><input type="radio" name="fmt" value="agenda"><b>Meeting agenda</b><span>.doc — timed agenda built from your set</span></label>
+            <label class="format"><input type="radio" name="fmt" value="pdf"><b>PDF / Print</b><span>Opens your print dialog — save as PDF or print handouts</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Options</legend>
+          <label class="check"><input type="checkbox" id="optMeta" checked>Show edition &amp; category</label>
+          <label class="check"><input type="checkbox" id="optIds" checked>Show prompt IDs</label>
+          <label class="check"><input type="checkbox" id="optNotes" checked>Include guidance &amp; facilitator notes</label>
+          <label class="check"><input type="checkbox" id="optGroup">Group by category</label>
+          <label class="check doc-only"><input type="checkbox" id="optBreaks">One prompt per page</label>
+          <label class="fld doc-only" id="linesFld"><span>Writing space under each prompt</span>
+            <select id="optLines" class="select">
+              <option value="0">None</option>
+              <option value="3">3 lines</option>
+              <option value="5">5 lines</option>
+              <option value="8">8 lines</option>
+            </select>
+          </label>
+          <div class="agenda-opts" id="agendaOpts" hidden>
+            <div class="fld-row">
+              <label class="fld"><span>Start time</span><input type="time" id="agStart" value="09:00"></label>
+              <label class="fld"><span>Minutes per prompt</span><input type="number" id="agMins" min="1" max="120" value="10"></label>
+            </div>
+            <label class="check"><input type="checkbox" id="agWelcome" checked>Welcome &amp; introductions (10 min)</label>
+            <label class="check"><input type="checkbox" id="agClosing" checked>Wrap-up &amp; next steps (10 min)</label>
+          </div>
+        </fieldset>
+      </div>
+      <div class="export-actions">
+        <button type="button" class="btn btn-primary btn-big" id="exportBtn">Download .doc</button>
+        <button type="button" class="btn" id="printBtn">Print / save as PDF</button>
+        <span class="export-hint" id="exportHint"></span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="sheet-backdrop" id="filterBackdrop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Filters">
+    <div class="sheet-head">
+      <b>Filters</b>
+      <button type="button" class="btn btn-ghost" id="clearFilters">Reset</button>
+      <button type="button" class="btn icon-btn" id="closeSheet" aria-label="Close filters">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="fgroup"><h3>Type</h3><div id="fTypes" class="checks"></div></div>
+      <div class="fgroup"><h3>Edition</h3><div id="fEds" class="checks"></div></div>
+      <div class="fgroup"><h3>Category <span class="hint">— within selected editions</span></h3><div id="fCats" class="checks checks-scroll"></div></div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn btn-primary" id="applyFilters">Show results</button>
+    </div>
+  </div>
+</div>
+
+<div id="printRoot" class="print-root" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+var SELN = {"meta":{"source":"SELN Strategic Reflection Guide v.17","total_prompts":261,"editions":[{"name":"State Team","code":"ST","count":72},{"name":"Self-Guided","code":"SG","count":18},{"name":"Provider","code":"PR","count":18},{"name":"Family & Individual","code":"FI","count":12},{"name":"Case Manager","code":"CM","count":19},{"name":"Waiver Manager","code":"WM","count":18},{"name":"School Transition","code":"ST2","count":18},{"name":"VR Partnership","code":"VR","count":18},{"name":"Quality & Compliance","code":"QC","count":18},{"name":"Self-Advocate","code":"SA","count":18},{"name":"Executive Leadership","code":"EL","count":16},{"name":"Facilitator Tools","code":"FT","count":16}],"types":["Closing","Core Question","Follow-up","Opener"],"categories":["Advocacy and Expectations","Cross-System Alignment","Cultural Expectations","Employer & Community Connections","Employer Relationships & Job Development","Family & Individual Engagement","Financing & Accountability","Follow-up Questions","Funding & Incentives","Funding & Resource Alignment","Innovation & Risk-Taking","Interagency Collaboration","Leadership","Leadership & Agency Support","Leadership & Culture","Leadership Culture","Leadership Support","Learning & Feedback","Listening Session Wrap-Up Prompts","Lived Experience & Expertise","Looking Ahead","Measurement & Learning","Measurement, Learning, and Impact","Measuring What Matters","Outcome Tracking","Partnership with State Agencies","Peer Support & Leadership","Plain Language Reflection Questions","Provider Capacity & Innovation","Provider Capacity & Support","Provider Oversight & Support","Reflection and Feedback","Resource Alignment & Funding","Service Access and Planning","Service Coordination & Roles","Service Vision & Goals","Session Closings","Session Openers","Skills & Preparation","Staff Training & Capacity","System Learning & Improvement","System Navigation","Systems Change & Advocacy","Transition Planning & Coordination","Vision & Strategic Goals","Vision & Strategic Investment","Vision and Shared Purpose","Workforce & Capacity"]},"prompts":[{"id":"ST-001","edition":"State Team","category":"Vision and Shared Purpose","prompt":"What draws your team to employment work?","type":"Core Question","notes":""},{"id":"ST-002","edition":"State Team","category":"Vision and Shared Purpose","prompt":"How do you talk about employment goals when you're with other state leaders?","type":"Core Question","notes":""},{"id":"ST-003","edition":"State Team","category":"Vision and Shared Purpose","prompt":"What would need to shift for employment to feel more central to your agency's identity?","type":"Core Question","notes":""},{"id":"ST-004","edition":"State Team","category":"Vision and Shared Purpose","prompt":"Tell us about a moment when employment work felt most aligned with your agency's broader mission. What made that connection visible?","type":"Core Question","notes":""},{"id":"ST-005","edition":"State Team","category":"Vision and Shared Purpose","prompt":"Describe a conversation where you felt most excited talking about employment goals. Who were you talking to, and what made it energizing?","type":"Core Question","notes":""},{"id":"ST-006","edition":"State Team","category":"Vision and Shared Purpose","prompt":"What are you noticing about how employment fits into your agency's priorities lately?","type":"Core Question","notes":""},{"id":"ST-007","edition":"State Team","category":"Vision and Shared Purpose","prompt":"When employment comes up in leadership conversations, what themes do you consistently hear?","type":"Core Question","notes":""},{"id":"ST-008","edition":"State Team","category":"Vision and Shared Purpose","prompt":"If employment outcomes became a primary measure of your agency's success, what would need to change?","type":"Core Question","notes":""},{"id":"ST-009","edition":"State Team","category":"Vision and Shared Purpose","prompt":"Think about your employment goals from two years ago compared to now. What's changed in how you talk about them or what you prioritize? What influenced those changes?","type":"Core Question","notes":""},{"id":"ST-010","edition":"State Team","category":"Vision and Shared Purpose","prompt":"When you think about your team's recent priorities and actions, where do you notice employment goals showing up? What does that tell you?","type":"Core Question","notes":""},{"id":"ST-011","edition":"State Team","category":"Vision and Shared Purpose","prompt":"Who has influenced your team's thinking about employment goals? What perspectives have been most important in shaping your approach?","type":"Core Question","notes":""},{"id":"ST-012","edition":"State Team","category":"Vision and Shared Purpose","prompt":"What's one question about employment goals that your team keeps returning to or should explore next?","type":"Core Question","notes":""},{"id":"ST-013","edition":"State Team","category":"Leadership Support","prompt":"How does leadership communicate about employment priorities?","type":"Core Question","notes":""},{"id":"ST-014","edition":"State Team","category":"Leadership Support","prompt":"What would visible leadership support look like day-to-day?","type":"Core Question","notes":""},{"id":"ST-015","edition":"State Team","category":"Leadership Support","prompt":"When has leadership support felt most tangible to you?","type":"Core Question","notes":""},{"id":"ST-016","edition":"State Team","category":"Leadership Support","prompt":"Tell us about a time when leadership support for employment felt most tangible. What did that look like day-to-day?","type":"Core Question","notes":""},{"id":"ST-017","edition":"State Team","category":"Leadership Support","prompt":"Describe a moment when you felt leadership really understood the complexity of employment work.","type":"Core Question","notes":""},{"id":"ST-018","edition":"State Team","category":"Leadership Support","prompt":"How does leadership communicate about employment priorities in your experience?","type":"Core Question","notes":""},{"id":"ST-019","edition":"State Team","category":"Leadership Support","prompt":"What does leadership support for employment look like in your agency right now?","type":"Core Question","notes":""},{"id":"ST-020","edition":"State Team","category":"Leadership Support","prompt":"What would leadership support look like if it addressed the real barriers you face?","type":"Core Question","notes":""},{"id":"ST-021","edition":"State Team","category":"Leadership Support","prompt":"If leadership asked you 'What do you need to be successful in employment work?', what would you say?","type":"Core Question","notes":""},{"id":"ST-022","edition":"State Team","category":"Leadership Support","prompt":"Tell us about a recent leadership decision or action that supported employment work. What made it effective?","type":"Core Question","notes":""},{"id":"ST-023","edition":"State Team","category":"Leadership Support","prompt":"Describe how different people in your system get opportunities to lead or shape employment work.","type":"Core Question","notes":""},{"id":"ST-024","edition":"State Team","category":"Leadership Support","prompt":"What messages about employment do you hear from leadership—both spoken and unspoken?","type":"Core Question","notes":""},{"id":"ST-025","edition":"State Team","category":"Leadership Support","prompt":"Tell us about a time when leadership created space to learn from something that didn't work as planned.","type":"Core Question","notes":""},{"id":"ST-026","edition":"State Team","category":"Funding & Incentives","prompt":"How do funding structures support or complicate employment outcomes?","type":"Core Question","notes":""},{"id":"ST-027","edition":"State Team","category":"Funding & Incentives","prompt":"What funding conversations do you find yourself having repeatedly?","type":"Core Question","notes":""},{"id":"ST-028","edition":"State Team","category":"Funding & Incentives","prompt":"If you could redesign one aspect of employment funding, what would it be?","type":"Core Question","notes":""},{"id":"ST-029","edition":"State Team","category":"Funding & Incentives","prompt":"What funding conversations do you find yourself having repeatedly? What would success look like?","type":"Core Question","notes":""},{"id":"ST-030","edition":"State Team","category":"Funding & Incentives","prompt":"Think about the last few funding decisions your team made. What did those decisions make easier or harder?","type":"Core Question","notes":""},{"id":"ST-031","edition":"State Team","category":"Funding & Incentives","prompt":"Tell us about a specific example where funding either helped or hindered employment goals.","type":"Core Question","notes":""},{"id":"ST-032","edition":"State Team","category":"Interagency Collaboration","prompt":"Tell us about interagency collaboration that's working well.","type":"Core Question","notes":""},{"id":"ST-033","edition":"State Team","category":"Interagency Collaboration","prompt":"What makes some cross-agency relationships more productive than others?","type":"Core Question","notes":""},{"id":"ST-034","edition":"State Team","category":"Interagency Collaboration","prompt":"What would seamless collaboration look like from the perspective of someone receiving services?","type":"Core Question","notes":""},{"id":"ST-035","edition":"State Team","category":"Interagency Collaboration","prompt":"Where do you see collaboration breaking down?","type":"Core Question","notes":""},{"id":"ST-036","edition":"State Team","category":"Interagency Collaboration","prompt":"What would make it easier to work across agencies?","type":"Core Question","notes":""},{"id":"ST-037","edition":"State Team","category":"Provider Capacity & Support","prompt":"How do you know when providers feel supported in employment work?","type":"Core Question","notes":""},{"id":"ST-038","edition":"State Team","category":"Provider Capacity & Support","prompt":"What do providers tell you they need most?","type":"Core Question","notes":""},{"id":"ST-039","edition":"State Team","category":"Provider Capacity & Support","prompt":"Describe a time when you felt like you were providing useful support to a provider.","type":"Core Question","notes":""},{"id":"ST-040","edition":"State Team","category":"Provider Capacity & Support","prompt":"What support do providers need to increase employment focus?","type":"Core Question","notes":""},{"id":"ST-041","edition":"State Team","category":"Provider Capacity & Support","prompt":"How are employment expectations communicated to providers?","type":"Core Question","notes":""},{"id":"ST-042","edition":"State Team","category":"Provider Capacity & Support","prompt":"What's working well in provider relationships?","type":"Core Question","notes":""},{"id":"ST-043","edition":"State Team","category":"Provider Capacity & Support","prompt":"What are providers telling you they need most for employment work?","type":"Core Question","notes":""},{"id":"ST-044","edition":"State Team","category":"Provider Capacity & Support","prompt":"How do you know when providers feel supported versus when they're just complying?","type":"Core Question","notes":""},{"id":"ST-045","edition":"State Team","category":"Provider Capacity & Support","prompt":"If you could create ideal conditions for provider success in employment, what would that look like?","type":"Core Question","notes":""},{"id":"ST-046","edition":"State Team","category":"Provider Capacity & Support","prompt":"What would you want to experiment with in provider support if resources weren't a constraint?","type":"Core Question","notes":""},{"id":"ST-047","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"What's something new you've tried in employment work lately?","type":"Core Question","notes":""},{"id":"ST-048","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"How does your system handle when new approaches don't work as expected?","type":"Core Question","notes":""},{"id":"ST-049","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"What would you experiment with if there were no consequences for failure?","type":"Core Question","notes":""},{"id":"ST-050","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"What new approaches is your team willing to try?","type":"Core Question","notes":""},{"id":"ST-051","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"How do you balance innovation with oversight requirements?","type":"Core Question","notes":""},{"id":"ST-052","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"What would help your team take more strategic risks?","type":"Core Question","notes":""},{"id":"ST-053","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"Tell us about something new you've tried in employment work lately. What did you learn?","type":"Core Question","notes":""},{"id":"ST-054","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"Describe a time when your team took a productive risk in employment work.","type":"Core Question","notes":""},{"id":"ST-055","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"What's an assumption about employment work that you or your team is ready to question?","type":"Core Question","notes":""},{"id":"ST-056","edition":"State Team","category":"Innovation & Risk-Taking","prompt":"If you could pilot anything in employment services, what would you want to try?","type":"Core Question","notes":""},{"id":"ST-057","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"How do you know when employment work is improving?","type":"Core Question","notes":""},{"id":"ST-058","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"What stories help you understand your impact?","type":"Core Question","notes":""},{"id":"ST-059","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"What questions about employment outcomes keep you curious?","type":"Core Question","notes":""},{"id":"ST-060","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"Tell us about a story that helps you understand your impact on employment outcomes.","type":"Core Question","notes":""},{"id":"ST-061","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"Describe a moment when you realized employment work was improving in your system.","type":"Core Question","notes":""},{"id":"ST-062","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"What data about employment outcomes tells you the most useful story about your system?","type":"Core Question","notes":""},{"id":"ST-063","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"How do you know when employment work is improving beyond just looking at numbers?","type":"Core Question","notes":""},{"id":"ST-064","edition":"State Team","category":"Measurement, Learning, and Impact","prompt":"What would you want to understand better about your employment system's impact?","type":"Core Question","notes":""},{"id":"ST-065","edition":"State Team","category":"Looking Ahead","prompt":"What part of your system feels most ready for growth or change?","type":"Core Question","notes":""},{"id":"ST-066","edition":"State Team","category":"Looking Ahead","prompt":"What assumptions are you or your team ready to question?","type":"Core Question","notes":""},{"id":"ST-067","edition":"State Team","category":"Looking Ahead","prompt":"What conversations do you want to be in next?","type":"Core Question","notes":""},{"id":"ST-068","edition":"State Team","category":"Looking Ahead","prompt":"What part of your employment system feels most ready for growth or change right now?","type":"Core Question","notes":""},{"id":"ST-069","edition":"State Team","category":"Looking Ahead","prompt":"What conversations about employment do you most want to be in next?","type":"Core Question","notes":""},{"id":"ST-070","edition":"State Team","category":"Looking Ahead","prompt":"If you could focus your employment efforts on just one area for the next year, where would you invest?","type":"Core Question","notes":""},{"id":"ST-071","edition":"State Team","category":"Looking Ahead","prompt":"Who do you want to be in deeper conversation with about employment work?","type":"Core Question","notes":""},{"id":"ST-072","edition":"State Team","category":"Looking Ahead","prompt":"What partnerships around employment work are you most curious to explore?","type":"Core Question","notes":""},{"id":"SG-001","edition":"Self-Guided","category":"Vision & Strategic Goals","prompt":"What does employment success look like across our system?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-002","edition":"Self-Guided","category":"Vision & Strategic Goals","prompt":"How do different stakeholders experience our goals?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-003","edition":"Self-Guided","category":"Vision & Strategic Goals","prompt":"What adjustments might make our goals more inclusive and actionable?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-004","edition":"Self-Guided","category":"Leadership & Culture","prompt":"What behaviors or messages from leaders reinforce employment as a priority?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-005","edition":"Self-Guided","category":"Leadership & Culture","prompt":"Where do we see leadership driving momentum-or unintentionally slowing it?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-006","edition":"Self-Guided","category":"Leadership & Culture","prompt":"What kind of leadership do we want to model at all levels?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-007","edition":"Self-Guided","category":"Financing & Accountability","prompt":"What are our funding structures telling us we value?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-008","edition":"Self-Guided","category":"Financing & Accountability","prompt":"Where is there alignment or misalignment between funding and outcomes?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-009","edition":"Self-Guided","category":"Financing & Accountability","prompt":"What funding changes could better incentivize employment outcomes?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-010","edition":"Self-Guided","category":"Interagency Collaboration","prompt":"Which partnerships feel productive? Which feel stuck?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-011","edition":"Self-Guided","category":"Interagency Collaboration","prompt":"How do we create shared ownership across agencies?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-012","edition":"Self-Guided","category":"Interagency Collaboration","prompt":"What would seamless collaboration look like to someone receiving services?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-013","edition":"Self-Guided","category":"Provider Capacity & Innovation","prompt":"What are providers telling us they need to succeed?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-014","edition":"Self-Guided","category":"Provider Capacity & Innovation","prompt":"Where do we see innovation happening-and what enables it?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-015","edition":"Self-Guided","category":"Provider Capacity & Innovation","prompt":"How do we balance accountability with supporting provider creativity?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-016","edition":"Self-Guided","category":"Measurement & Learning","prompt":"What data really helps us understand our impact?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-017","edition":"Self-Guided","category":"Measurement & Learning","prompt":"How do we capture stories alongside statistics?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"SG-018","edition":"Self-Guided","category":"Measurement & Learning","prompt":"What are we learning about what works-and what doesn't?","type":"Core Question","notes":"For self-facilitated meetings"},{"id":"PR-001","edition":"Provider","category":"Service Vision & Goals","prompt":"What are your organization's goals for employment services?","type":"Core Question","notes":""},{"id":"PR-002","edition":"Provider","category":"Service Vision & Goals","prompt":"How do these goals align with what you're hearing from the state?","type":"Core Question","notes":""},{"id":"PR-003","edition":"Provider","category":"Service Vision & Goals","prompt":"What would success in employment services look like for your organization?","type":"Core Question","notes":""},{"id":"PR-004","edition":"Provider","category":"Leadership & Agency Support","prompt":"How does your leadership demonstrate commitment to employment?","type":"Core Question","notes":""},{"id":"PR-005","edition":"Provider","category":"Leadership & Agency Support","prompt":"What support from leadership would help you be more successful?","type":"Core Question","notes":""},{"id":"PR-006","edition":"Provider","category":"Leadership & Agency Support","prompt":"What messages about employment do you receive from your leadership?","type":"Core Question","notes":""},{"id":"PR-007","edition":"Provider","category":"Funding & Incentives","prompt":"How do current funding structures impact your employment services?","type":"Core Question","notes":""},{"id":"PR-008","edition":"Provider","category":"Funding & Incentives","prompt":"What funding changes would help you serve people better?","type":"Core Question","notes":""},{"id":"PR-009","edition":"Provider","category":"Funding & Incentives","prompt":"What financial incentives or barriers affect your employment work?","type":"Core Question","notes":""},{"id":"PR-010","edition":"Provider","category":"Partnership with State Agencies","prompt":"What partnerships (e.g., with state agencies, VR, schools) are working well?","type":"Core Question","notes":""},{"id":"PR-011","edition":"Provider","category":"Partnership with State Agencies","prompt":"What collaboration challenges are you facing?","type":"Core Question","notes":""},{"id":"PR-012","edition":"Provider","category":"Partnership with State Agencies","prompt":"What would help build stronger system-wide alignment?","type":"Core Question","notes":""},{"id":"PR-013","edition":"Provider","category":"Workforce & Capacity","prompt":"What are your staff doing well—and where do they need more support?","type":"Core Question","notes":""},{"id":"PR-014","edition":"Provider","category":"Workforce & Capacity","prompt":"What has worked well for hiring, onboarding, and training?","type":"Core Question","notes":""},{"id":"PR-015","edition":"Provider","category":"Workforce & Capacity","prompt":"Where do staff feel empowered—and where do they feel stuck?","type":"Core Question","notes":""},{"id":"PR-016","edition":"Provider","category":"Learning & Feedback","prompt":"How do you use data or feedback to improve your services?","type":"Core Question","notes":""},{"id":"PR-017","edition":"Provider","category":"Learning & Feedback","prompt":"What stories or signals tell you that your services are making a difference?","type":"Core Question","notes":""},{"id":"PR-018","edition":"Provider","category":"Learning & Feedback","prompt":"Where could the state do more to learn from providers?","type":"Core Question","notes":""},{"id":"FI-001","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"What's working well with employment supports right now?","type":"Core Question","notes":"Plain language version"},{"id":"FI-002","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"What would make employment services better for you or your family member?","type":"Core Question","notes":"Plain language version"},{"id":"FI-003","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"Tell us about a time when you felt really supported in finding or keeping a job.","type":"Core Question","notes":"Plain language version"},{"id":"FI-004","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"What do you wish service providers understood about your employment goals?","type":"Core Question","notes":"Plain language version"},{"id":"FI-005","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"Who has been most helpful in your employment journey?","type":"Core Question","notes":"Plain language version"},{"id":"FI-006","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"What information about employment would be most helpful to have?","type":"Core Question","notes":"Plain language version"},{"id":"FI-007","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"What barriers to employment feel biggest right now?","type":"Core Question","notes":"Plain language version"},{"id":"FI-008","edition":"Family & Individual","category":"Plain Language Reflection Questions","prompt":"If you could change one thing about employment services, what would it be?","type":"Core Question","notes":"Plain language version"},{"id":"FI-009","edition":"Family & Individual","category":"Listening Session Wrap-Up Prompts","prompt":"What's one thing you heard today that surprised you?","type":"Core Question","notes":"Plain language version"},{"id":"FI-010","edition":"Family & Individual","category":"Listening Session Wrap-Up Prompts","prompt":"What idea mentioned today do you want to learn more about?","type":"Core Question","notes":"Plain language version"},{"id":"FI-011","edition":"Family & Individual","category":"Listening Session Wrap-Up Prompts","prompt":"What story or example from today will stick with you?","type":"Core Question","notes":"Plain language version"},{"id":"FI-012","edition":"Family & Individual","category":"Listening Session Wrap-Up Prompts","prompt":"What's one action you might take based on today's discussion?","type":"Core Question","notes":"Plain language version"},{"id":"CM-001","edition":"Case Manager","category":"Advocacy and Expectations","prompt":"What helps you feel confident advocating for someone's employment goals?","type":"Core Question","notes":""},{"id":"CM-002","edition":"Case Manager","category":"Advocacy and Expectations","prompt":"What signals do you get-directly or indirectly-about the importance of employment?","type":"Core Question","notes":""},{"id":"CM-003","edition":"Case Manager","category":"Advocacy and Expectations","prompt":"What leadership or training supports make advocacy easier?","type":"Core Question","notes":""},{"id":"CM-004","edition":"Case Manager","category":"Advocacy and Expectations","prompt":"Where do you notice doubt about whether someone can work-and how do you respond?","type":"Core Question","notes":""},{"id":"CM-005","edition":"Case Manager","category":"Advocacy and Expectations","prompt":"Tell us about a time when you successfully advocated for someone's employment goals.","type":"Core Question","notes":""},{"id":"CM-006","edition":"Case Manager","category":"System Navigation","prompt":"What parts of interagency collaboration support you in your role?","type":"Core Question","notes":""},{"id":"CM-007","edition":"Case Manager","category":"System Navigation","prompt":"Where do timelines or planning expectations conflict across systems?","type":"Core Question","notes":""},{"id":"CM-008","edition":"Case Manager","category":"System Navigation","prompt":"How do you handle confusion or overlap in roles between DD, VR, or education?","type":"Core Question","notes":""},{"id":"CM-009","edition":"Case Manager","category":"System Navigation","prompt":"What would make system coordination easier or clearer?","type":"Core Question","notes":""},{"id":"CM-010","edition":"Case Manager","category":"Service Access and Planning","prompt":"How easy is it to authorize and explain employment services?","type":"Core Question","notes":""},{"id":"CM-011","edition":"Case Manager","category":"Service Access and Planning","prompt":"What supports are available-but rarely used or understood?","type":"Core Question","notes":""},{"id":"CM-012","edition":"Case Manager","category":"Service Access and Planning","prompt":"When have you had to get creative to help someone pursue a job goal?","type":"Core Question","notes":""},{"id":"CM-013","edition":"Case Manager","category":"Service Access and Planning","prompt":"Tell us about a time when employment planning worked really well.","type":"Core Question","notes":""},{"id":"CM-014","edition":"Case Manager","category":"Cultural Expectations","prompt":"How do employment expectations vary across the people you support?","type":"Core Question","notes":""},{"id":"CM-015","edition":"Case Manager","category":"Cultural Expectations","prompt":"What messages about employment do families and individuals receive-and from whom?","type":"Core Question","notes":""},{"id":"CM-016","edition":"Case Manager","category":"Cultural Expectations","prompt":"Where do you see hope and belief in employment possibilities-and where is that missing?","type":"Core Question","notes":""},{"id":"CM-017","edition":"Case Manager","category":"Reflection and Feedback","prompt":"What feedback from individuals helps you improve your practice?","type":"Core Question","notes":""},{"id":"CM-018","edition":"Case Manager","category":"Reflection and Feedback","prompt":"How do you know when employment planning is really person-centered?","type":"Core Question","notes":""},{"id":"CM-019","edition":"Case Manager","category":"Reflection and Feedback","prompt":"What questions about employment would you like to explore with other case managers?","type":"Core Question","notes":""},{"id":"WM-001","edition":"Waiver Manager","category":"Leadership","prompt":"How do employment goals show up in waiver design, guidance, or oversight priorities?","type":"Core Question","notes":""},{"id":"WM-002","edition":"Waiver Manager","category":"Leadership","prompt":"What actions signal that employment is more than a stated value in our system?","type":"Core Question","notes":""},{"id":"WM-003","edition":"Waiver Manager","category":"Leadership","prompt":"Where might leadership decisions be unintentionally creating mixed messages about employment?","type":"Core Question","notes":""},{"id":"WM-004","edition":"Waiver Manager","category":"Funding & Resource Alignment","prompt":"How do current rate structures and funding mechanisms support or restrict CIE?","type":"Core Question","notes":""},{"id":"WM-005","edition":"Waiver Manager","category":"Funding & Resource Alignment","prompt":"Where do service definitions or payment rules create confusion or misalignment with goals?","type":"Core Question","notes":""},{"id":"WM-006","edition":"Waiver Manager","category":"Funding & Resource Alignment","prompt":"What strategies or changes could make employment-related funding more flexible and person-centered?","type":"Core Question","notes":""},{"id":"WM-007","edition":"Waiver Manager","category":"Staff Training & Capacity","prompt":"How are case managers and providers trained to support employment services under the waiver? Is it working?","type":"Core Question","notes":""},{"id":"WM-008","edition":"Waiver Manager","category":"Staff Training & Capacity","prompt":"What capacity gaps are most visible-and how are we responding?","type":"Core Question","notes":""},{"id":"WM-009","edition":"Waiver Manager","category":"Staff Training & Capacity","prompt":"What policies or incentives help grow the employment service workforce?","type":"Core Question","notes":""},{"id":"WM-010","edition":"Waiver Manager","category":"Cultural Expectations","prompt":"What expectations about employment are embedded in waiver language, forms, or guidance?","type":"Core Question","notes":""},{"id":"WM-011","edition":"Waiver Manager","category":"Cultural Expectations","prompt":"Where do we unintentionally reinforce old assumptions or limiting practices?","type":"Core Question","notes":""},{"id":"WM-012","edition":"Waiver Manager","category":"Cultural Expectations","prompt":"What actions can help shift the system toward higher expectations for everyone?","type":"Core Question","notes":""},{"id":"WM-013","edition":"Waiver Manager","category":"Family & Individual Engagement","prompt":"How are individuals and families included in shaping waiver services and revisions?","type":"Core Question","notes":""},{"id":"WM-014","edition":"Waiver Manager","category":"Family & Individual Engagement","prompt":"What supports help families understand employment options and believe it's possible?","type":"Core Question","notes":""},{"id":"WM-015","edition":"Waiver Manager","category":"Family & Individual Engagement","prompt":"Where do people feel like they have real choices-and where is that missing?","type":"Core Question","notes":""},{"id":"WM-016","edition":"Waiver Manager","category":"Outcome Tracking","prompt":"What employment data are we collecting from waiver participants-and how do we use it?","type":"Core Question","notes":""},{"id":"WM-017","edition":"Waiver Manager","category":"Outcome Tracking","prompt":"How is that data shared across agencies or levels of leadership?","type":"Core Question","notes":""},{"id":"WM-018","edition":"Waiver Manager","category":"Outcome Tracking","prompt":"What's missing in our ability to understand waiver impact on real employment outcomes?","type":"Core Question","notes":""},{"id":"ST2-001","edition":"School Transition","category":"Transition Planning & Coordination","prompt":"Tell us about a transition plan that led to great employment outcomes. What made that planning different?","type":"Core Question","notes":""},{"id":"ST2-002","edition":"School Transition","category":"Transition Planning & Coordination","prompt":"Describe a moment when you felt like transition planning really clicked for a student and family.","type":"Core Question","notes":""},{"id":"ST2-003","edition":"School Transition","category":"Transition Planning & Coordination","prompt":"How do you know when transition planning is preparing someone for employment versus meeting compliance?","type":"Core Question","notes":""},{"id":"ST2-004","edition":"School Transition","category":"Transition Planning & Coordination","prompt":"What are you learning about what makes transition planning most effective for employment outcomes?","type":"Core Question","notes":""},{"id":"ST2-005","edition":"School Transition","category":"Transition Planning & Coordination","prompt":"What would seamless transition coordination look like from a student and family perspective?","type":"Core Question","notes":""},{"id":"ST2-006","edition":"School Transition","category":"Transition Planning & Coordination","prompt":"If you could redesign transition planning to optimize for employment outcomes, what would change?","type":"Core Question","notes":""},{"id":"ST2-007","edition":"School Transition","category":"Employer & Community Connections","prompt":"Tell us about your most successful employer partnership for student employment.","type":"Core Question","notes":""},{"id":"ST2-008","edition":"School Transition","category":"Employer & Community Connections","prompt":"Describe a time when a community connection really opened doors for student employment.","type":"Core Question","notes":""},{"id":"ST2-009","edition":"School Transition","category":"Employer & Community Connections","prompt":"What makes some employer relationships more productive for student employment than others?","type":"Core Question","notes":""},{"id":"ST2-010","edition":"School Transition","category":"Employer & Community Connections","prompt":"Who in your community has been most valuable for creating employment opportunities for students?","type":"Core Question","notes":""},{"id":"ST2-011","edition":"School Transition","category":"Employer & Community Connections","prompt":"What would you want employers to understand about hiring students with disabilities?","type":"Core Question","notes":""},{"id":"ST2-012","edition":"School Transition","category":"Employer & Community Connections","prompt":"How could schools better connect students to real employment opportunities in their communities?","type":"Core Question","notes":""},{"id":"ST2-013","edition":"School Transition","category":"Skills & Preparation","prompt":"Tell us about a student who surprised you with their employment success. What supports made that possible?","type":"Core Question","notes":""},{"id":"ST2-014","edition":"School Transition","category":"Skills & Preparation","prompt":"Describe a moment when you saw a student's confidence about employment really grow.","type":"Core Question","notes":""},{"id":"ST2-015","edition":"School Transition","category":"Skills & Preparation","prompt":"How do you balance academic requirements with employment preparation in transition planning?","type":"Core Question","notes":""},{"id":"ST2-016","edition":"School Transition","category":"Skills & Preparation","prompt":"What employment-related skills do you see students needing most as they leave school?","type":"Core Question","notes":""},{"id":"ST2-017","edition":"School Transition","category":"Skills & Preparation","prompt":"If you could design ideal employment preparation within schools, what would that look like?","type":"Core Question","notes":""},{"id":"ST2-018","edition":"School Transition","category":"Skills & Preparation","prompt":"What would you want to experiment with in preparing students for employment?","type":"Core Question","notes":""},{"id":"VR-001","edition":"VR Partnership","category":"Service Coordination & Roles","prompt":"Tell us about a time when VR and IDD services worked together really well for someone.","type":"Core Question","notes":""},{"id":"VR-002","edition":"VR Partnership","category":"Service Coordination & Roles","prompt":"Describe your best experience with cross-agency service planning for employment.","type":"Core Question","notes":""},{"id":"VR-003","edition":"VR Partnership","category":"Service Coordination & Roles","prompt":"How do you navigate different agency priorities when planning employment services together?","type":"Core Question","notes":""},{"id":"VR-004","edition":"VR Partnership","category":"Service Coordination & Roles","prompt":"What would ideal service coordination look like from the person receiving services' perspective?","type":"Core Question","notes":""},{"id":"VR-005","edition":"VR Partnership","category":"Service Coordination & Roles","prompt":"What are you learning about when VR-IDD partnerships work best versus when they struggle?","type":"Core Question","notes":""},{"id":"VR-006","edition":"VR Partnership","category":"Service Coordination & Roles","prompt":"How do you determine which agency should take the lead on different aspects of employment support?","type":"Core Question","notes":""},{"id":"VR-007","edition":"VR Partnership","category":"Resource Alignment & Funding","prompt":"Tell us about a situation where VR and IDD funding complemented each other well for employment.","type":"Core Question","notes":""},{"id":"VR-008","edition":"VR Partnership","category":"Resource Alignment & Funding","prompt":"Describe a creative funding solution you've seen that really supported someone's employment goals.","type":"Core Question","notes":""},{"id":"VR-009","edition":"VR Partnership","category":"Resource Alignment & Funding","prompt":"What funding coordination challenges most affect employment service quality?","type":"Core Question","notes":""},{"id":"VR-010","edition":"VR Partnership","category":"Resource Alignment & Funding","prompt":"How do you work through conflicts when agencies have different funding timelines or requirements?","type":"Core Question","notes":""},{"id":"VR-011","edition":"VR Partnership","category":"Resource Alignment & Funding","prompt":"If you could redesign how VR and IDD funding work together, what would you change?","type":"Core Question","notes":""},{"id":"VR-012","edition":"VR Partnership","category":"Resource Alignment & Funding","prompt":"What would seamless resource coordination look like for employment outcomes?","type":"Core Question","notes":""},{"id":"VR-013","edition":"VR Partnership","category":"Employer Relationships & Job Development","prompt":"Tell us about your most successful employer partnership.","type":"Core Question","notes":""},{"id":"VR-014","edition":"VR Partnership","category":"Employer Relationships & Job Development","prompt":"Describe a job development success that involved both VR and IDD services.","type":"Core Question","notes":""},{"id":"VR-015","edition":"VR Partnership","category":"Employer Relationships & Job Development","prompt":"How do you balance individual needs with employer expectations in job development?","type":"Core Question","notes":""},{"id":"VR-016","edition":"VR Partnership","category":"Employer Relationships & Job Development","prompt":"What makes some employer relationships more productive for people with complex support needs?","type":"Core Question","notes":""},{"id":"VR-017","edition":"VR Partnership","category":"Employer Relationships & Job Development","prompt":"What would you want employers to know about working with both VR and IDD services?","type":"Core Question","notes":""},{"id":"VR-018","edition":"VR Partnership","category":"Employer Relationships & Job Development","prompt":"How could VR and IDD agencies better support each other in employer relationships?","type":"Core Question","notes":""},{"id":"QC-001","edition":"Quality & Compliance","category":"Measuring What Matters","prompt":"Tell us about a quality measure that really captures good employment outcomes.","type":"Core Question","notes":""},{"id":"QC-002","edition":"Quality & Compliance","category":"Measuring What Matters","prompt":"Describe a time when data helped you understand employment service quality in a new way.","type":"Core Question","notes":""},{"id":"QC-003","edition":"Quality & Compliance","category":"Measuring What Matters","prompt":"How do you balance compliance requirements with supporting innovation in employment services?","type":"Core Question","notes":""},{"id":"QC-004","edition":"Quality & Compliance","category":"Measuring What Matters","prompt":"What would quality employment services look like from the perspective of someone receiving them?","type":"Core Question","notes":""},{"id":"QC-005","edition":"Quality & Compliance","category":"Measuring What Matters","prompt":"What are you learning about which quality measures actually drive improvements?","type":"Core Question","notes":""},{"id":"QC-006","edition":"Quality & Compliance","category":"Measuring What Matters","prompt":"How do you know when your oversight is helping versus hindering employment service quality?","type":"Core Question","notes":""},{"id":"QC-007","edition":"Quality & Compliance","category":"Provider Oversight & Support","prompt":"Tell us about your most effective interaction with a provider about employment quality.","type":"Core Question","notes":""},{"id":"QC-008","edition":"Quality & Compliance","category":"Provider Oversight & Support","prompt":"Describe a time when your oversight or feedback really helped a provider improve employment outcomes.","type":"Core Question","notes":""},{"id":"QC-009","edition":"Quality & Compliance","category":"Provider Oversight & Support","prompt":"How do you distinguish between compliance issues and opportunities for improvement?","type":"Core Question","notes":""},{"id":"QC-010","edition":"Quality & Compliance","category":"Provider Oversight & Support","prompt":"What kind of oversight relationship actually helps providers deliver better employment outcomes?","type":"Core Question","notes":""},{"id":"QC-011","edition":"Quality & Compliance","category":"Provider Oversight & Support","prompt":"What would supportive accountability look like for employment service providers?","type":"Core Question","notes":""},{"id":"QC-012","edition":"Quality & Compliance","category":"Provider Oversight & Support","prompt":"How could quality oversight better support providers in achieving employment outcomes?","type":"Core Question","notes":""},{"id":"QC-013","edition":"Quality & Compliance","category":"System Learning & Improvement","prompt":"Tell us about a time when quality data led to meaningful improvements in employment services.","type":"Core Question","notes":""},{"id":"QC-014","edition":"Quality & Compliance","category":"System Learning & Improvement","prompt":"Describe a system-level change that improved employment outcomes. How did quality information contribute?","type":"Core Question","notes":""},{"id":"QC-015","edition":"Quality & Compliance","category":"System Learning & Improvement","prompt":"How do you use compliance information to support system-wide learning about employment?","type":"Core Question","notes":""},{"id":"QC-016","edition":"Quality & Compliance","category":"System Learning & Improvement","prompt":"What would continuous quality improvement look like for employment services in your state?","type":"Core Question","notes":""},{"id":"QC-017","edition":"Quality & Compliance","category":"System Learning & Improvement","prompt":"If you could redesign quality oversight to optimize for employment outcomes, what would change?","type":"Core Question","notes":""},{"id":"QC-018","edition":"Quality & Compliance","category":"System Learning & Improvement","prompt":"What would you want to experiment with in quality assurance if you could try anything?","type":"Core Question","notes":""},{"id":"SA-001","edition":"Self-Advocate","category":"Lived Experience & Expertise","prompt":"Tell us about your experience with employment services. What worked well, and what would you change?","type":"Core Question","notes":""},{"id":"SA-002","edition":"Self-Advocate","category":"Lived Experience & Expertise","prompt":"Describe a moment when you felt like your voice and experience were really valued in employment planning.","type":"Core Question","notes":""},{"id":"SA-003","edition":"Self-Advocate","category":"Lived Experience & Expertise","prompt":"What do people need to understand about your experience with employment that they might not realize?","type":"Core Question","notes":""},{"id":"SA-004","edition":"Self-Advocate","category":"Lived Experience & Expertise","prompt":"How do you want to be involved in improving employment services for other people with disabilities?","type":"Core Question","notes":""},{"id":"SA-005","edition":"Self-Advocate","category":"Lived Experience & Expertise","prompt":"What changes in employment systems would make the biggest difference for people with disabilities?","type":"Core Question","notes":""},{"id":"SA-006","edition":"Self-Advocate","category":"Lived Experience & Expertise","prompt":"What would you want service providers and agencies to know about employment from your perspective?","type":"Core Question","notes":""},{"id":"SA-007","edition":"Self-Advocate","category":"Systems Change & Advocacy","prompt":"Tell us about a time when your voice made a difference in employment services or policy.","type":"Core Question","notes":""},{"id":"SA-008","edition":"Self-Advocate","category":"Systems Change & Advocacy","prompt":"Describe your most effective advocacy experience around employment. What made that successful?","type":"Core Question","notes":""},{"id":"SA-009","edition":"Self-Advocate","category":"Systems Change & Advocacy","prompt":"How can employment services better include people with disabilities in decision-making?","type":"Core Question","notes":""},{"id":"SA-010","edition":"Self-Advocate","category":"Systems Change & Advocacy","prompt":"What would meaningful inclusion of self-advocates look like in employment system planning?","type":"Core Question","notes":""},{"id":"SA-011","edition":"Self-Advocate","category":"Systems Change & Advocacy","prompt":"What would you change about employment services if you had the power to make those decisions?","type":"Core Question","notes":""},{"id":"SA-012","edition":"Self-Advocate","category":"Systems Change & Advocacy","prompt":"How can self-advocates be better supported to influence employment policy and practice?","type":"Core Question","notes":""},{"id":"SA-013","edition":"Self-Advocate","category":"Peer Support & Leadership","prompt":"Tell us about a time when you supported another person with disabilities around employment.","type":"Core Question","notes":""},{"id":"SA-014","edition":"Self-Advocate","category":"Peer Support & Leadership","prompt":"Describe a leadership role you've taken or want to take in employment work.","type":"Core Question","notes":""},{"id":"SA-015","edition":"Self-Advocate","category":"Peer Support & Leadership","prompt":"What role do you want to play in employment systems in your community?","type":"Core Question","notes":""},{"id":"SA-016","edition":"Self-Advocate","category":"Peer Support & Leadership","prompt":"How can self-advocates better support each other around employment goals and experiences?","type":"Core Question","notes":""},{"id":"SA-017","edition":"Self-Advocate","category":"Peer Support & Leadership","prompt":"What would peer support around employment look like if designed by and for people with disabilities?","type":"Core Question","notes":""},{"id":"SA-018","edition":"Self-Advocate","category":"Peer Support & Leadership","prompt":"What leadership opportunities around employment would you like to see created?","type":"Core Question","notes":""},{"id":"EL-001","edition":"Executive Leadership","category":"Vision & Strategic Investment","prompt":"Tell us about a strategic decision that significantly advanced employment outcomes in your state.","type":"Core Question","notes":""},{"id":"EL-002","edition":"Executive Leadership","category":"Vision & Strategic Investment","prompt":"Describe a moment when employment work felt most aligned with your agency's broader mission and impact.","type":"Core Question","notes":""},{"id":"EL-003","edition":"Executive Leadership","category":"Vision & Strategic Investment","prompt":"What does success in employment look like at the scale you're thinking about?","type":"Core Question","notes":""},{"id":"EL-004","edition":"Executive Leadership","category":"Vision & Strategic Investment","prompt":"If employment outcomes became a primary measure of your agency's impact, how would that change your approach?","type":"Core Question","notes":""},{"id":"EL-005","edition":"Executive Leadership","category":"Vision & Strategic Investment","prompt":"Where are you investing in employment transformation versus compliance?","type":"Core Question","notes":""},{"id":"EL-006","edition":"Executive Leadership","category":"Vision & Strategic Investment","prompt":"What investment would make the biggest difference for employment outcomes?","type":"Core Question","notes":""},{"id":"EL-007","edition":"Executive Leadership","category":"Cross-System Alignment","prompt":"Where is cross-agency alignment strongest on employment?","type":"Core Question","notes":""},{"id":"EL-008","edition":"Executive Leadership","category":"Cross-System Alignment","prompt":"Tell us about a time when agencies worked together exceptionally well for employment outcomes.","type":"Core Question","notes":""},{"id":"EL-009","edition":"Executive Leadership","category":"Cross-System Alignment","prompt":"What would make collaboration across systems more effective?","type":"Core Question","notes":""},{"id":"EL-010","edition":"Executive Leadership","category":"Cross-System Alignment","prompt":"How do you balance competing priorities across agencies when it comes to employment?","type":"Core Question","notes":""},{"id":"EL-011","edition":"Executive Leadership","category":"Cross-System Alignment","prompt":"What cross-agency barriers most affect employment outcomes at a system level?","type":"Core Question","notes":""},{"id":"EL-012","edition":"Executive Leadership","category":"Leadership Culture","prompt":"What does your leadership team model about employment expectations?","type":"Core Question","notes":""},{"id":"EL-013","edition":"Executive Leadership","category":"Leadership Culture","prompt":"Tell us about a time when leadership took a meaningful risk to advance employment goals.","type":"Core Question","notes":""},{"id":"EL-014","edition":"Executive Leadership","category":"Leadership Culture","prompt":"What leadership culture changes would most support employment transformation?","type":"Core Question","notes":""},{"id":"EL-015","edition":"Executive Leadership","category":"Leadership Culture","prompt":"How do you create psychological safety for innovation in employment services?","type":"Core Question","notes":""},{"id":"EL-016","edition":"Executive Leadership","category":"Leadership Culture","prompt":"What messages from leadership most influence employment outcomes across your system?","type":"Core Question","notes":""},{"id":"FT-001","edition":"Facilitator Tools","category":"Session Openers","prompt":"Tell us about a recent employment success that surprised you. What made it work, and who was part of making it happen?","type":"Opener","notes":"For High Trust/Established Group"},{"id":"FT-002","edition":"Facilitator Tools","category":"Session Openers","prompt":"Think about your recent work on employment. What's one thing that's going well that you'd like others to know about?","type":"Opener","notes":"For New/Cautious Group"},{"id":"FT-003","edition":"Facilitator Tools","category":"Session Openers","prompt":"Each role sees employment work differently. Let's start with what each of you is noticing from your unique vantage point.","type":"Opener","notes":"For Mixed Audience Session"},{"id":"FT-004","edition":"Facilitator Tools","category":"Session Openers","prompt":"We have limited time, so let's focus on the most important insights. What's the one thing about employment work you most want this group to understand?","type":"Opener","notes":"For Time-Constrained Session"},{"id":"FT-005","edition":"Facilitator Tools","category":"Session Closings","prompt":"Based on what we've heard today, what's one thing you want to try or explore further?","type":"Closing","notes":"For Action-Oriented Groups"},{"id":"FT-006","edition":"Facilitator Tools","category":"Session Closings","prompt":"What's one insight from today you want to hold onto?","type":"Closing","notes":"For Learning-Focused Groups"},{"id":"FT-007","edition":"Facilitator Tools","category":"Session Closings","prompt":"Who is someone you want to connect with based on today's conversation?","type":"Closing","notes":"For Relationship-Building Groups"},{"id":"FT-008","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"What made that work?","type":"Follow-up","notes":"After Success Stories"},{"id":"FT-009","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"Who else was involved in making that happen?","type":"Follow-up","notes":"After Success Stories"},{"id":"FT-010","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"What conditions supported that success?","type":"Follow-up","notes":"After Success Stories"},{"id":"FT-011","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"What would support have looked like in that situation?","type":"Follow-up","notes":"After Challenge Stories"},{"id":"FT-012","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"Who would be helpful to have in conversations about this?","type":"Follow-up","notes":"After Challenge Stories"},{"id":"FT-013","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"What would you try if you could experiment without consequences?","type":"Follow-up","notes":"After Challenge Stories"},{"id":"FT-014","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"What questions does that raise for you?","type":"Follow-up","notes":"After Learning/Insight Moments"},{"id":"FT-015","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"How might that apply to other situations?","type":"Follow-up","notes":"After Learning/Insight Moments"},{"id":"FT-016","edition":"Facilitator Tools","category":"Follow-up Questions","prompt":"What would you want to explore more about that?","type":"Follow-up","notes":"After Learning/Insight Moments"}]};
+/* SELN Prompt Studio — export builders.
+   Pure string/byte functions (no DOM) so they run in the browser and in Node tests.
+   Produces: a real .pptx (minimal OOXML in a stored ZIP), Word-compatible .doc HTML,
+   and a timed meeting-agenda document. */
+
+(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) module.exports = factory();
+  else root.SelnExport = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  /* ---------- shared helpers ---------- */
+
+  function xesc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  }
+  function hesc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function slug(s) {
+    return (String(s).trim() || 'seln-reflection-session')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'seln-export';
+  }
+  function fmt12(totalMinutes) {
+    var m = ((totalMinutes % 1440) + 1440) % 1440;
+    var h = Math.floor(m / 60), mm = m % 60;
+    var h12 = ((h + 11) % 12) + 1;
+    return h12 + ':' + (mm < 10 ? '0' : '') + mm + ' ' + (h < 12 ? 'AM' : 'PM');
+  }
+  function parseHM(hm) {
+    var m = /^(\d{1,2}):(\d{2})$/.exec(hm || '');
+    if (!m) return 9 * 60;
+    return Math.min(23, +m[1]) * 60 + Math.min(59, +m[2]);
+  }
+  function longDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!m) return '';
+    return new Date(+m[1], +m[2] - 1, +m[3])
+      .toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  /* Group items by category, preserving the order categories first appear. */
+  function groupItems(items) {
+    var order = [], map = {};
+    items.forEach(function (it) {
+      var c = it.category || 'Custom';
+      if (!map[c]) { map[c] = []; order.push(c); }
+      map[c].push(it);
+    });
+    return order.map(function (c) { return { category: c, items: map[c] }; });
+  }
+
+  function metaLine(it, o) {
+    var bits = [];
+    if (o.ids && it.id) bits.push(it.id);
+    if (o.meta) {
+      if (it.edition) bits.push(it.edition);
+      if (it.category) bits.push(it.category);
+      if (it.type) bits.push(it.type);
+    }
+    return bits.join(' · ');
+  }
+
+  /* ---------- ZIP writer (stored, no compression) ---------- */
+
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(buf) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  /* files: [{name, data: string|Uint8Array}] -> Uint8Array of a valid ZIP */
+  function zipStore(files) {
+    var enc = new TextEncoder();
+    var dosDate = ((2026 - 1980) << 9) | (1 << 5) | 1; // fixed 2026-01-01 for determinism
+    var dosTime = 12 << 11;
+    var parts = [], central = [], offset = 0;
+
+    files.forEach(function (f) {
+      var nameB = enc.encode(f.name);
+      var data = typeof f.data === 'string' ? enc.encode(f.data) : f.data;
+      var crc = crc32(data);
+
+      var local = new Uint8Array(30 + nameB.length);
+      var dv = new DataView(local.buffer);
+      dv.setUint32(0, 0x04034b50, true);
+      dv.setUint16(4, 20, true);
+      dv.setUint16(10, dosTime, true);
+      dv.setUint16(12, dosDate, true);
+      dv.setUint32(14, crc, true);
+      dv.setUint32(18, data.length, true);
+      dv.setUint32(22, data.length, true);
+      dv.setUint16(26, nameB.length, true);
+      local.set(nameB, 30);
+      parts.push(local, data);
+
+      var cen = new Uint8Array(46 + nameB.length);
+      var cv = new DataView(cen.buffer);
+      cv.setUint32(0, 0x02014b50, true);
+      cv.setUint16(4, 20, true);
+      cv.setUint16(6, 20, true);
+      cv.setUint16(12, dosTime, true);
+      cv.setUint16(14, dosDate, true);
+      cv.setUint32(16, crc, true);
+      cv.setUint32(20, data.length, true);
+      cv.setUint32(24, data.length, true);
+      cv.setUint16(28, nameB.length, true);
+      cv.setUint32(42, offset, true);
+      cen.set(nameB, 46);
+      central.push(cen);
+
+      offset += local.length + data.length;
+    });
+
+    var cenSize = central.reduce(function (a, c) { return a + c.length; }, 0);
+    var end = new Uint8Array(22);
+    var ev = new DataView(end.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(8, files.length, true);
+    ev.setUint16(10, files.length, true);
+    ev.setUint32(12, cenSize, true);
+    ev.setUint32(16, offset, true);
+
+    var out = new Uint8Array(offset + cenSize + 22), p = 0;
+    parts.concat(central, [end]).forEach(function (part) { out.set(part, p); p += part.length; });
+    return out;
+  }
+
+  /* ---------- PPTX ---------- */
+
+  var EMU = 914400;                      // EMUs per inch
+  var SLIDE_W = 12192000, SLIDE_H = 6858000; // 16:9
+  var C_INK = '20302C', C_MUTE = '667571', C_ACCENT = '0E6E5C', C_PAPER = 'FBFAF7';
+  var NS = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" ' +
+    'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" ' +
+    'xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"';
+
+  function run(text, o) {
+    return '<a:r><a:rPr lang="en-US" sz="' + o.sz + '"' + (o.b ? ' b="1"' : '') + (o.i ? ' i="1"' : '') +
+      (o.spc ? ' spc="' + o.spc + '"' : '') + ' dirty="0"><a:solidFill><a:srgbClr val="' + (o.color || C_INK) +
+      '"/></a:solidFill><a:latin typeface="' + (o.font || 'Georgia') + '"/></a:rPr><a:t>' + xesc(text) + '</a:t></a:r>';
+  }
+  function para(runs, algn) {
+    return '<a:p><a:pPr algn="' + (algn || 'l') + '"/>' + runs + '</a:p>';
+  }
+  function textBox(id, x, y, w, h, paras, anchor) {
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="Text ' + id + '"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>' +
+      '<p:spPr><a:xfrm><a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + w + '" cy="' + h + '"/></a:xfrm>' +
+      '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>' +
+      '<p:txBody><a:bodyPr wrap="square" rtlCol="0" anchor="' + (anchor || 't') + '"><a:normAutofit/></a:bodyPr><a:lstStyle/>' +
+      paras + '</p:txBody></p:sp>';
+  }
+  function rectShape(id, x, y, w, h, color) {
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="Rect ' + id + '"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>' +
+      '<p:spPr><a:xfrm><a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + w + '" cy="' + h + '"/></a:xfrm>' +
+      '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="' + color + '"/></a:solidFill>' +
+      '<a:ln><a:noFill/></a:ln></p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>';
+  }
+  function slideXml(shapes) {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+      '<p:sld ' + NS + '><p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val="' + C_PAPER +
+      '"/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree>' +
+      '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
+      '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>' +
+      shapes + '</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>';
+  }
+
+  var THEME_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+    '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="SELN"><a:themeElements>' +
+    '<a:clrScheme name="SELN"><a:dk1><a:srgbClr val="20302C"/></a:dk1><a:lt1><a:srgbClr val="FBFAF7"/></a:lt1>' +
+    '<a:dk2><a:srgbClr val="44544F"/></a:dk2><a:lt2><a:srgbClr val="EDEBE4"/></a:lt2>' +
+    '<a:accent1><a:srgbClr val="0E6E5C"/></a:accent1><a:accent2><a:srgbClr val="B0641C"/></a:accent2>' +
+    '<a:accent3><a:srgbClr val="3D5A9E"/></a:accent3><a:accent4><a:srgbClr val="A84465"/></a:accent4>' +
+    '<a:accent5><a:srgbClr val="6C4AB0"/></a:accent5><a:accent6><a:srgbClr val="A6432C"/></a:accent6>' +
+    '<a:hlink><a:srgbClr val="0E6E5C"/></a:hlink><a:folHlink><a:srgbClr val="44544F"/></a:folHlink></a:clrScheme>' +
+    '<a:fontScheme name="SELN"><a:majorFont><a:latin typeface="Georgia"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont>' +
+    '<a:minorFont><a:latin typeface="Calibri"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont></a:fontScheme>' +
+    '<a:fmtScheme name="Office"><a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+    '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst>' +
+    '<a:lnStyleLst><a:ln w="6350"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln>' +
+    '<a:ln w="12700"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln>' +
+    '<a:ln w="19050"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln></a:lnStyleLst>' +
+    '<a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle>' +
+    '<a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst>' +
+    '<a:bgFillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+    '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements></a:theme>';
+
+  var EMPTY_TREE = '<p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
+    '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree>';
+
+  var MASTER_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+    '<p:sldMaster ' + NS + '><p:cSld>' + EMPTY_TREE + '</p:cSld>' +
+    '<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" ' +
+    'accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>' +
+    '<p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId1"/></p:sldLayoutIdLst></p:sldMaster>';
+
+  var LAYOUT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+    '<p:sldLayout ' + NS + ' type="blank" preserve="1"><p:cSld name="Blank">' + EMPTY_TREE + '</p:cSld>' +
+    '<p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>';
+
+  var REL_NS = 'http://schemas.openxmlformats.org/package/2006/relationships';
+  var OD_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+
+  function promptFontSize(len) {
+    if (len < 90) return 4000;
+    if (len < 160) return 3400;
+    if (len < 240) return 2800;
+    return 2400;
+  }
+
+  /* items: [{n, text, id, edition, category, type, srcNote, userNote}] (n = 1-based number)
+     opts: {title, subtitle, facilitator, org, dateStr, ids, meta, notes, group} */
+  function buildPptx(items, opts) {
+    var L = Math.round(0.9 * EMU);                 // left margin
+    var W = SLIDE_W - 2 * L;                       // usable width
+    var slides = [];
+    var total = items.length;
+
+    // Title slide
+    var coverBits = [];
+    if (opts.facilitator) coverBits.push('Facilitated by ' + opts.facilitator);
+    if (opts.org) coverBits.push(opts.org);
+    if (opts.dateStr) coverBits.push(opts.dateStr);
+    var titleShapes =
+      rectShape(2, L, Math.round(1.42 * EMU), Math.round(0.75 * EMU), Math.round(0.05 * EMU), C_ACCENT) +
+      textBox(3, L, Math.round(1.65 * EMU), W, Math.round(0.45 * EMU),
+        para(run((total + ' reflection prompts — SELN Strategic Reflection Guide').toUpperCase(),
+          { sz: 1300, b: 1, color: C_ACCENT, font: 'Calibri', spc: 120 }))) +
+      textBox(4, L, Math.round(2.15 * EMU), W, Math.round(2.1 * EMU),
+        para(run(opts.title, { sz: 4400, b: 1, color: C_INK }))) +
+      (opts.subtitle ? textBox(5, L, Math.round(4.35 * EMU), W, Math.round(0.8 * EMU),
+        para(run(opts.subtitle, { sz: 1800, color: C_MUTE, font: 'Calibri' }))) : '') +
+      (coverBits.length ? textBox(6, L, Math.round(6.35 * EMU), W, Math.round(0.5 * EMU),
+        para(run(coverBits.join('  ·  '), { sz: 1200, color: C_MUTE, font: 'Calibri' }))) : '');
+    slides.push(slideXml(titleShapes));
+
+    // Prompt slides (with optional section dividers)
+    var sections = opts.group ? groupItems(items) : [{ category: null, items: items }];
+    sections.forEach(function (sec) {
+      if (sec.category) {
+        slides.push(slideXml(
+          rectShape(2, L, Math.round(2.55 * EMU), Math.round(0.75 * EMU), Math.round(0.05 * EMU), C_ACCENT) +
+          textBox(3, L, Math.round(2.8 * EMU), W, Math.round(0.45 * EMU),
+            para(run('SECTION', { sz: 1300, b: 1, color: C_ACCENT, font: 'Calibri', spc: 200 }))) +
+          textBox(4, L, Math.round(3.25 * EMU), W, Math.round(1.4 * EMU),
+            para(run(sec.category, { sz: 3200, b: 1, color: C_INK }))) +
+          textBox(5, L, Math.round(6.35 * EMU), W, Math.round(0.5 * EMU),
+            para(run(sec.items.length + (sec.items.length === 1 ? ' prompt' : ' prompts'),
+              { sz: 1200, color: C_MUTE, font: 'Calibri' })))
+        ));
+      }
+      sec.items.forEach(function (it) {
+        var kickerBits = [];
+        if (opts.meta && it.category) kickerBits.push(it.category);
+        if (opts.meta && it.edition) kickerBits.push(it.edition);
+        var footBits = [];
+        if (opts.ids && it.id) footBits.push(it.id);
+        if (opts.meta && it.type) footBits.push(it.type);
+        if (opts.notes && it.srcNote) footBits.push(it.srcNote);
+        if (opts.notes && it.userNote) footBits.push(it.userNote);
+        var shapes =
+          (kickerBits.length ? textBox(2, L, Math.round(0.55 * EMU), W, Math.round(0.4 * EMU),
+            para(run(kickerBits.join('  ·  ').toUpperCase(), { sz: 1300, b: 1, color: C_ACCENT, font: 'Calibri', spc: 120 }))) : '') +
+          rectShape(3, L, Math.round(1.08 * EMU), Math.round(0.75 * EMU), Math.round(0.045 * EMU), C_ACCENT) +
+          textBox(4, L, Math.round(1.35 * EMU), W, Math.round(4.35 * EMU),
+            para(run(it.text, { sz: promptFontSize(it.text.length), color: C_INK })), 'ctr') +
+          (footBits.length ? textBox(5, L, Math.round(6.25 * EMU), W - Math.round(1.2 * EMU), Math.round(0.5 * EMU),
+            para(run(footBits.join('  ·  '), { sz: 1100, color: C_MUTE, font: 'Calibri' }))) : '') +
+          textBox(6, SLIDE_W - L - Math.round(1.2 * EMU), Math.round(6.25 * EMU), Math.round(1.2 * EMU), Math.round(0.5 * EMU),
+            para(run(it.n + ' / ' + total, { sz: 1100, color: C_MUTE, font: 'Calibri' }), 'r'));
+        slides.push(slideXml(shapes));
+      });
+    });
+
+    // Package parts
+    var files = [];
+    var contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>' +
+      '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/>' +
+      '<Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/>' +
+      '<Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>' +
+      slides.map(function (_, i) {
+        return '<Override PartName="/ppt/slides/slide' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>';
+      }).join('') + '</Types>';
+    files.push({ name: '[Content_Types].xml', data: contentTypes });
+
+    files.push({
+      name: '_rels/.rels',
+      data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' +
+        '<Relationship Id="rId1" Type="' + OD_REL + '/officeDocument" Target="ppt/presentation.xml"/></Relationships>'
+    });
+
+    var sldIds = slides.map(function (_, i) {
+      return '<p:sldId id="' + (256 + i) + '" r:id="rId' + (i + 2) + '"/>';
+    }).join('');
+    files.push({
+      name: 'ppt/presentation.xml',
+      data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<p:presentation ' + NS + '>' +
+        '<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst>' +
+        '<p:sldIdLst>' + sldIds + '</p:sldIdLst>' +
+        '<p:sldSz cx="' + SLIDE_W + '" cy="' + SLIDE_H + '"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>'
+    });
+
+    var presRels = '<Relationship Id="rId1" Type="' + OD_REL + '/slideMaster" Target="slideMasters/slideMaster1.xml"/>' +
+      slides.map(function (_, i) {
+        return '<Relationship Id="rId' + (i + 2) + '" Type="' + OD_REL + '/slide" Target="slides/slide' + (i + 1) + '.xml"/>';
+      }).join('');
+    files.push({
+      name: 'ppt/_rels/presentation.xml.rels',
+      data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' + presRels + '</Relationships>'
+    });
+
+    files.push({ name: 'ppt/slideMasters/slideMaster1.xml', data: MASTER_XML });
+    files.push({
+      name: 'ppt/slideMasters/_rels/slideMaster1.xml.rels',
+      data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' +
+        '<Relationship Id="rId1" Type="' + OD_REL + '/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>' +
+        '<Relationship Id="rId2" Type="' + OD_REL + '/theme" Target="../theme/theme1.xml"/></Relationships>'
+    });
+    files.push({ name: 'ppt/slideLayouts/slideLayout1.xml', data: LAYOUT_XML });
+    files.push({
+      name: 'ppt/slideLayouts/_rels/slideLayout1.xml.rels',
+      data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' +
+        '<Relationship Id="rId1" Type="' + OD_REL + '/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>'
+    });
+    files.push({ name: 'ppt/theme/theme1.xml', data: THEME_XML });
+
+    slides.forEach(function (xml, i) {
+      files.push({ name: 'ppt/slides/slide' + (i + 1) + '.xml', data: xml });
+      files.push({
+        name: 'ppt/slides/_rels/slide' + (i + 1) + '.xml.rels',
+        data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="' + REL_NS + '">' +
+          '<Relationship Id="rId1" Type="' + OD_REL + '/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>'
+      });
+    });
+
+    return zipStore(files);
+  }
+
+  /* ---------- Word (.doc via HTML) ---------- */
+
+  var WORD_CSS = [
+    'body{font-family:Georgia,"Times New Roman",serif;color:#20302C;font-size:11.5pt;line-height:1.45}',
+    'p{margin:0 0 6pt 0}',
+    '.xp-kicker{font-family:Arial,sans-serif;font-size:9pt;letter-spacing:1.5pt;color:#0E6E5C;font-weight:bold;text-transform:uppercase;margin:0 0 10pt 0}',
+    '.xp-title{font-size:26pt;font-weight:bold;margin:0 0 8pt 0;line-height:1.15}',
+    '.xp-subtitle{font-size:13pt;color:#5E6E69;margin:0 0 6pt 0}',
+    '.xp-covermeta{font-family:Arial,sans-serif;font-size:9.5pt;color:#5E6E69;margin:14pt 0 0 0}',
+    '.xp-cover{border-bottom:2.25pt solid #0E6E5C;padding-bottom:18pt;margin-bottom:24pt}',
+    '.xp-cat{font-size:15pt;font-weight:bold;color:#0E6E5C;border-bottom:1pt solid #C9C7BC;padding-bottom:4pt;margin:22pt 0 12pt 0}',
+    '.xp-item{margin:0 0 16pt 0}',
+    '.xp-q{font-size:12.5pt;margin:0 0 4pt 0}',
+    '.xp-qnum{font-family:Arial,sans-serif;font-size:10pt;font-weight:bold;color:#0E6E5C}',
+    '.xp-meta{font-family:Arial,sans-serif;font-size:8.5pt;color:#5E6E69;letter-spacing:.4pt;margin:0 0 3pt 0}',
+    '.xp-note{font-size:10.5pt;font-style:italic;color:#5E6E69;margin:0 0 3pt 0}',
+    '.xp-line{border-bottom:1pt solid #C9C7BC;margin:0 0 14pt 0;font-size:10pt}',
+    '.xp-break{page-break-before:always}',
+    'table.xp-agenda{border-collapse:collapse;width:100%;font-size:11pt}',
+    'table.xp-agenda th{font-family:Arial,sans-serif;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;color:#5E6E69;text-align:left;border-bottom:2.25pt solid #0E6E5C;padding:6pt 10pt 6pt 0}',
+    'table.xp-agenda td{border-bottom:1pt solid #C9C7BC;padding:9pt 10pt 9pt 0;vertical-align:top}',
+    'td.xp-time{white-space:nowrap;font-family:Arial,sans-serif;font-size:10pt;color:#0E6E5C;font-weight:bold;width:70pt}',
+    'td.xp-min{white-space:nowrap;font-family:Arial,sans-serif;font-size:10pt;color:#5E6E69;width:45pt}'
+  ].join('\n');
+
+  function wordWrap(title, bodyHtml) {
+    return '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>' + hesc(title) + '</title>' +
+      '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->' +
+      '<style>@page{size:8.5in 11.0in;margin:1.0in 0.9in;mso-header-margin:0.5in;mso-footer-margin:0.5in}\n' + WORD_CSS + '</style>' +
+      '</head><body>' + bodyHtml + '</body></html>';
+  }
+
+  function coverHtml(o, kicker) {
+    var bits = [];
+    if (o.dateStr) bits.push(o.dateStr);
+    if (o.facilitator) bits.push('Facilitator: ' + o.facilitator);
+    if (o.org) bits.push(o.org);
+    return '<div class="xp-cover">' +
+      '<p class="xp-kicker">' + hesc(kicker) + '</p>' +
+      '<h1 class="xp-title">' + hesc(o.title) + '</h1>' +
+      (o.subtitle ? '<p class="xp-subtitle">' + hesc(o.subtitle) + '</p>' : '') +
+      (bits.length ? '<p class="xp-covermeta">' + hesc(bits.join('  ·  ')) + '</p>' : '') +
+      '</div>';
+  }
+
+  function itemHtml(it, o, withBreak) {
+    var html = '<div class="xp-item' + (withBreak ? ' xp-break' : '') + '">';
+    html += '<p class="xp-q"><span class="xp-qnum">' + it.n + '.&nbsp;&nbsp;</span>' + hesc(it.text) + '</p>';
+    var m = metaLine(it, o);
+    if (m) html += '<p class="xp-meta">' + hesc(m) + '</p>';
+    if (o.notes && it.srcNote) html += '<p class="xp-note">Guidance: ' + hesc(it.srcNote) + '</p>';
+    if (o.notes && it.userNote) html += '<p class="xp-note">Facilitator note: ' + hesc(it.userNote) + '</p>';
+    for (var i = 0; i < (o.lines || 0); i++) html += '<p class="xp-line">&nbsp;</p>';
+    return html + '</div>';
+  }
+
+  /* Discussion-guide body — shared by the .doc download and the print/PDF view. */
+  function buildDocBody(items, o) {
+    var html = coverHtml(o, 'SELN Strategic Reflection Guide · ' + items.length +
+      (items.length === 1 ? ' prompt' : ' prompts'));
+    var first = true;
+    if (o.group) {
+      groupItems(items).forEach(function (sec) {
+        html += '<h2 class="xp-cat' + (o.breaks && !first ? ' xp-break' : '') + '">' + hesc(sec.category) + '</h2>';
+        sec.items.forEach(function (it, i) {
+          html += itemHtml(it, o, o.breaks && !(i === 0));
+          first = false;
+        });
+      });
+    } else {
+      items.forEach(function (it) {
+        html += itemHtml(it, o, o.breaks && !first);
+        first = false;
+      });
+    }
+    return html;
+  }
+
+  /* Timed agenda body — shared by the .doc download and the print/PDF view.
+     o.agenda: {start:"HH:MM", mins, welcome, closing} */
+  function buildAgendaBody(items, o) {
+    var ag = o.agenda || {};
+    var mins = Math.max(1, +ag.mins || 10);
+    var rows = [];
+    var t = parseHM(ag.start);
+    if (ag.welcome) { rows.push({ t: t, min: 10, title: 'Welcome & introductions', meta: '', notes: [] }); t += 10; }
+    items.forEach(function (it) {
+      var notes = [];
+      if (o.notes && it.srcNote) notes.push('Guidance: ' + it.srcNote);
+      if (o.notes && it.userNote) notes.push('Note: ' + it.userNote);
+      rows.push({ t: t, min: mins, title: it.text, meta: metaLine(it, o), notes: notes });
+      t += mins;
+    });
+    if (ag.closing) { rows.push({ t: t, min: 10, title: 'Wrap-up & next steps', meta: '', notes: [] }); t += 10; }
+    var startM = parseHM(ag.start);
+    var header = Object.assign({}, o, {
+      subtitle: o.subtitle,
+      dateStr: [o.dateStr, fmt12(startM) + ' – ' + fmt12(t) + ' (' + (t - startM) + ' min)']
+        .filter(Boolean).join('  ·  ')
+    });
+    var html = coverHtml(header, 'Meeting Agenda');
+    html += '<table class="xp-agenda"><thead><tr><th>Time</th><th>Min</th><th>Item</th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      html += '<tr><td class="xp-time">' + fmt12(r.t) + '</td><td class="xp-min">' + r.min + '</td><td><b>' +
+        hesc(r.title) + '</b>' +
+        (r.meta ? '<br><span class="xp-meta">' + hesc(r.meta) + '</span>' : '') +
+        r.notes.map(function (nt) { return '<br><span class="xp-note">' + hesc(nt) + '</span>'; }).join('') +
+        '</td></tr>';
+    });
+    html += '</tbody></table>';
+    return html;
+  }
+
+  return {
+    xesc: xesc, hesc: hesc, slug: slug, fmt12: fmt12, parseHM: parseHM, longDate: longDate,
+    crc32: crc32, zipStore: zipStore, buildPptx: buildPptx,
+    wordWrap: wordWrap, buildDocBody: buildDocBody, buildAgendaBody: buildAgendaBody, WORD_CSS: WORD_CSS
+  };
+});
+
+/* SELN Prompt Studio — UI logic. Expects globals: SELN (data), SelnExport (builders). */
+(function () {
+  'use strict';
+
+  var X = SelnExport;
+  var PROMPTS = SELN.prompts.map(function (p, i) { return Object.assign({ _i: i }, p); });
+  var META = SELN.meta;
+  var TYPE_ORDER = { 'Opener': 0, 'Core Question': 1, 'Follow-up': 2, 'Closing': 3 };
+  var ED_ORDER = {};
+  META.editions.forEach(function (e, i) { ED_ORDER[e.name] = i; });
+
+  var ED_COLORS = {
+    'State Team': '#0E6E5C', 'Self-Guided': '#3D5A9E', 'Provider': '#B0641C',
+    'Family & Individual': '#A84465', 'Case Manager': '#7A4E9E', 'Waiver Manager': '#2C6E8F',
+    'School Transition': '#66701F', 'VR Partnership': '#A6432C', 'Quality & Compliance': '#5E7069',
+    'Self-Advocate': '#6C4AB0', 'Executive Leadership': '#31536B', 'Facilitator Tools': '#8A6A1F',
+    'Custom': '#5E6E69'
+  };
+
+  function esc(s) { return X.hesc(s == null ? '' : s); }
+  function $(sel) { return document.querySelector(sel); }
+
+  /* ---------- state ---------- */
+
+  var uidCounter = 1;
+  var state = {
+    q: '', eds: new Set(), cats: new Set(), types: new Set(), sort: 'guide',
+    view: 'library',
+    sel: [],
+    doc: { title: '', subtitle: '', facilitator: '', org: '', date: new Date().toISOString().slice(0, 10) },
+    exp: {
+      format: 'word', meta: true, ids: true, notes: true, group: false, breaks: false, lines: 0,
+      agStart: '09:00', agMins: 10, agWelcome: true, agClosing: true
+    }
+  };
+
+  var STORE_KEY = 'seln-prompt-studio-v1';
+  function save() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ sel: state.sel, doc: state.doc, exp: state.exp }));
+    } catch (e) { /* storage unavailable — session-only */ }
+  }
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (Array.isArray(d.sel)) state.sel = d.sel;
+      if (d.doc) Object.assign(state.doc, d.doc);
+      if (d.exp) Object.assign(state.exp, d.exp);
+      state.sel.forEach(function (s) { uidCounter = Math.max(uidCounter, (s.uid || 0) + 1); });
+    } catch (e) { /* corrupted store — start fresh */ }
+  }
+
+  /* ---------- selection helpers ---------- */
+
+  function selIds() {
+    var set = new Set();
+    state.sel.forEach(function (s) { if (s.srcId) set.add(s.srcId); });
+    return set;
+  }
+
+  function addPrompt(p) {
+    state.sel.push({
+      uid: uidCounter++, srcId: p.id, text: p.prompt, edition: p.edition,
+      category: p.category, type: p.type, srcNote: p.notes || '', userNote: ''
+    });
+  }
+
+  function removeBySrcId(id) {
+    state.sel = state.sel.filter(function (s) { return s.srcId !== id; });
+  }
+
+  /* ---------- filtering + sorting ---------- */
+
+  function filtered() {
+    var q = state.q.trim().toLowerCase();
+    var list = PROMPTS.filter(function (p) {
+      if (state.eds.size && !state.eds.has(p.edition)) return false;
+      if (state.types.size && !state.types.has(p.type)) return false;
+      if (state.cats.size && !state.cats.has(p.category)) return false;
+      if (q) {
+        var hay = (p.prompt + ' ' + p.category + ' ' + p.id + ' ' + p.edition + ' ' + (p.notes || '')).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    var s = state.sort;
+    if (s === 'az') list.sort(function (a, b) { return a.prompt.localeCompare(b.prompt); });
+    else if (s === 'category') list.sort(function (a, b) { return a.category.localeCompare(b.category) || a._i - b._i; });
+    else if (s === 'type') list.sort(function (a, b) { return (TYPE_ORDER[a.type] - TYPE_ORDER[b.type]) || a._i - b._i; });
+    else if (s === 'edition') list.sort(function (a, b) { return (ED_ORDER[a.edition] - ED_ORDER[b.edition]) || a._i - b._i; });
+    return list;
+  }
+
+  function filterCount() { return state.eds.size + state.cats.size + state.types.size; }
+
+  /* ---------- rendering ---------- */
+
+  function badge(edition) {
+    var c = ED_COLORS[edition] || ED_COLORS.Custom;
+    return '<span class="badge" style="--ed:' + c + '">' + esc(edition) + '</span>';
+  }
+
+  function renderChrome() {
+    var n = state.sel.length;
+    var pill = $('#countPill');
+    pill.textContent = n + ' selected';
+    pill.classList.toggle('has-items', n > 0);
+    var nav = $('#navCount');
+    nav.hidden = n === 0;
+    nav.textContent = n;
+    document.querySelectorAll('#tabs .tab').forEach(function (t) {
+      t.classList.toggle('is-active', t.dataset.view === state.view);
+    });
+    document.querySelectorAll('.view').forEach(function (v) {
+      v.hidden = v.id !== 'view-' + state.view;
+    });
+    var fc = $('#filterCount');
+    fc.hidden = filterCount() === 0;
+    fc.textContent = filterCount();
+  }
+
+  function renderChips() {
+    $('#edChips').innerHTML = META.editions.map(function (e) {
+      var on = state.eds.has(e.name);
+      return '<button type="button" class="chip' + (on ? ' is-on' : '') + '" style="--ed:' +
+        (ED_COLORS[e.name] || '#5E6E69') + '" data-ed="' + esc(e.name) + '" aria-pressed="' + on + '">' +
+        esc(e.name) + ' <span style="opacity:.65">' + e.count + '</span></button>';
+    }).join('');
+  }
+
+  function renderCards() {
+    var list = filtered();
+    var ids = selIds();
+    $('#resultCount').textContent = list.length + ' of ' + PROMPTS.length + ' prompts';
+    $('#addAllBtn').hidden = list.length === 0 || list.every(function (p) { return ids.has(p.id); });
+    if (!list.length) {
+      $('#cards').innerHTML = '<div class="lib-empty">No prompts match — try clearing a filter or changing your search.</div>';
+      return;
+    }
+    $('#cards').innerHTML = list.map(function (p) {
+      var added = ids.has(p.id);
+      return '<article class="pcard' + (added ? ' is-selected' : '') + '">' +
+        '<div class="pcard-head">' + badge(p.edition) +
+        '<span class="ttag">' + esc(p.type) + '</span>' +
+        '<span class="pid">' + esc(p.id) + '</span></div>' +
+        '<div class="pcard-cat">' + esc(p.category) + '</div>' +
+        '<p class="pcard-text">' + esc(p.prompt) + '</p>' +
+        (p.notes ? '<p class="pcard-note">' + esc(p.notes) + '</p>' : '') +
+        '<div class="pcard-foot"><button type="button" class="btn add-btn' + (added ? ' is-added' : '') +
+        '" data-toggle="' + esc(p.id) + '">' + (added ? 'Added ✓' : 'Add') + '</button></div>' +
+        '</article>';
+    }).join('');
+  }
+
+  function renderSet() {
+    var n = state.sel.length;
+    $('#setEmpty').hidden = n > 0;
+    $('#setActions').hidden = n === 0;
+    $('#setSummary').textContent = n
+      ? n + (n === 1 ? ' prompt' : ' prompts') + ' — drag (or use arrows) to reorder; tap Edit to reword.'
+      : 'Arrange, edit, and annotate your selected prompts.';
+    $('#setList').innerHTML = state.sel.map(function (s, i) {
+      return '<li class="set-item" draggable="true" data-uid="' + s.uid + '">' +
+        '<div class="item-head">' +
+        '<span class="drag-handle" aria-hidden="true">⠿</span>' +
+        '<span class="item-num">' + (i + 1) + '</span>' +
+        badge(s.edition) +
+        '<span class="pcard-cat">' + esc(s.category) + '</span>' +
+        (s.srcId ? '<span class="pid">' + esc(s.srcId) + '</span>' : '<span class="pid">custom</span>') +
+        '</div>' +
+        '<p class="item-text">' + esc(s.text) + '</p>' +
+        (s.srcNote ? '<p class="item-srcnote">Guidance: ' + esc(s.srcNote) + '</p>' : '') +
+        '<textarea class="item-note" data-note="' + s.uid + '" rows="1" placeholder="Facilitator note (optional) — appears in exports">' + esc(s.userNote) + '</textarea>' +
+        '<div class="item-actions">' +
+        '<button type="button" class="btn" data-move="up" data-uid="' + s.uid + '" aria-label="Move up"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button type="button" class="btn" data-move="down" data-uid="' + s.uid + '" aria-label="Move down"' + (i === n - 1 ? ' disabled' : '') + '>↓</button>' +
+        '<button type="button" class="btn" data-edit="' + s.uid + '">Edit</button>' +
+        '<button type="button" class="btn btn-danger-ghost" data-remove="' + s.uid + '">Remove</button>' +
+        '</div>' +
+        '<div class="item-edit" hidden data-editbox="' + s.uid + '">' +
+        '<textarea>' + esc(s.text) + '</textarea>' +
+        '<div class="form-row">' +
+        '<button type="button" class="btn btn-primary" data-save-edit="' + s.uid + '">Save</button>' +
+        '<button type="button" class="btn" data-cancel-edit="' + s.uid + '">Cancel</button>' +
+        '</div></div>' +
+        '</li>';
+    }).join('');
+  }
+
+  function agendaSpan() {
+    var e = state.exp;
+    var start = X.parseHM(e.agStart);
+    var total = (e.agWelcome ? 10 : 0) + (e.agClosing ? 10 : 0) + state.sel.length * Math.max(1, +e.agMins || 10);
+    return X.fmt12(start) + ' – ' + X.fmt12(start + total) + ' (' + total + ' min)';
+  }
+
+  function renderExport() {
+    var n = state.sel.length;
+    var e = state.exp;
+    var fmtNames = { word: 'Word document', pptx: 'PowerPoint deck', agenda: 'meeting agenda', pdf: 'PDF / print view' };
+    $('#exportSummary').textContent = n
+      ? 'Exporting ' + n + (n === 1 ? ' prompt' : ' prompts') + ' as a ' + fmtNames[e.format] + '.'
+      : 'Your set is empty — add prompts from the library first.';
+    $('#agendaOpts').hidden = e.format !== 'agenda';
+    document.querySelectorAll('.doc-only').forEach(function (el) {
+      el.style.display = (e.format === 'word' || e.format === 'pdf') ? '' : 'none';
+    });
+    var exportBtn = $('#exportBtn');
+    var labels = { word: 'Download .doc', pptx: 'Download .pptx', agenda: 'Download agenda .doc', pdf: 'Open print dialog' };
+    exportBtn.textContent = labels[e.format];
+    exportBtn.disabled = n === 0;
+    var printBtn = $('#printBtn');
+    printBtn.hidden = e.format === 'pptx' || e.format === 'pdf';
+    printBtn.disabled = n === 0;
+    $('#exportHint').textContent = (e.format === 'agenda' && n) ? 'Runs ' + agendaSpan() : '';
+  }
+
+  function render() {
+    renderChrome();
+    if (state.view === 'library') { renderChips(); renderCards(); }
+    else if (state.view === 'set') renderSet();
+    else renderExport();
+    save();
+  }
+
+  function go(view) { state.view = view; window.scrollTo(0, 0); render(); }
+
+  /* ---------- toast ---------- */
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+
+  /* ---------- filter sheet ---------- */
+
+  function checkRow(group, value, label, checked) {
+    return '<label class="check"><input type="checkbox" data-fgroup="' + group + '" value="' + esc(value) + '"' +
+      (checked ? ' checked' : '') + '>' + label + '</label>';
+  }
+
+  function renderSheet() {
+    $('#fTypes').innerHTML = META.types.map(function (t) {
+      return checkRow('types', t, esc(t), state.types.has(t));
+    }).join('');
+    $('#fEds').innerHTML = META.editions.map(function (e) {
+      return checkRow('eds', e.name, esc(e.name) + ' <span style="color:var(--mute)">(' + e.count + ')</span>', state.eds.has(e.name));
+    }).join('');
+    var cats = [];
+    var seen = new Set();
+    PROMPTS.forEach(function (p) {
+      if (state.eds.size && !state.eds.has(p.edition)) return;
+      if (!seen.has(p.category)) { seen.add(p.category); cats.push(p.category); }
+    });
+    cats.sort(function (a, b) { return a.localeCompare(b); });
+    $('#fCats').innerHTML = cats.map(function (c) {
+      return checkRow('cats', c, esc(c), state.cats.has(c));
+    }).join('');
+    $('#applyFilters').textContent = 'Show ' + filtered().length + ' prompts';
+  }
+
+  function openSheet() { renderSheet(); $('#filterBackdrop').hidden = false; }
+  function closeSheet() { $('#filterBackdrop').hidden = true; render(); }
+
+  /* ---------- export ---------- */
+
+  function exportItems() {
+    var e = state.exp;
+    var items = state.sel.map(function (s) {
+      return {
+        text: s.text, id: s.srcId || '', edition: s.edition, category: s.category,
+        type: s.type === 'Custom' ? '' : s.type, srcNote: s.srcNote, userNote: s.userNote
+      };
+    });
+    if (e.group) {
+      var order = [], map = {};
+      items.forEach(function (it) {
+        var c = it.category || 'Custom';
+        if (!map[c]) { map[c] = []; order.push(c); }
+        map[c].push(it);
+      });
+      items = [];
+      order.forEach(function (c) { items = items.concat(map[c]); });
+    }
+    items.forEach(function (it, i) { it.n = i + 1; });
+    return items;
+  }
+
+  function exportOpts() {
+    var d = state.doc, e = state.exp;
+    return {
+      title: d.title.trim() || 'SELN Reflection Session',
+      subtitle: d.subtitle.trim(),
+      facilitator: d.facilitator.trim(),
+      org: d.org.trim(),
+      dateStr: X.longDate(d.date),
+      meta: e.meta, ids: e.ids, notes: e.notes, group: e.group,
+      breaks: e.breaks, lines: +e.lines || 0,
+      agenda: { start: e.agStart, mins: e.agMins, welcome: e.agWelcome, closing: e.agClosing }
+    };
+  }
+
+  function download(name, blob) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }
+
+  function printHtml(bodyHtml) {
+    var root = $('#printRoot');
+    root.innerHTML = bodyHtml;
+    var cleanup = function () { root.innerHTML = ''; window.removeEventListener('afterprint', cleanup); };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+  }
+
+  function runExport(asPrint) {
+    if (!state.sel.length) return;
+    var items = exportItems();
+    var o = exportOpts();
+    var fmt = state.exp.format;
+    var base = X.slug(o.title);
+    if (fmt === 'pptx') {
+      var bytes = X.buildPptx(items, o);
+      download(base + '.pptx', new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }));
+      toast('Downloaded ' + base + '.pptx');
+      return;
+    }
+    var body = fmt === 'agenda' ? X.buildAgendaBody(items, o) : X.buildDocBody(items, o);
+    if (fmt === 'pdf' || asPrint) {
+      printHtml(body);
+      return;
+    }
+    var name = base + (fmt === 'agenda' ? '-agenda' : '') + '.doc';
+    download(name, new Blob([X.wordWrap(o.title, body)], { type: 'application/msword' }));
+    toast('Downloaded ' + name);
+  }
+
+  /* ---------- events ---------- */
+
+  $('#tabs').addEventListener('click', function (ev) {
+    var t = ev.target.closest('.tab');
+    if (t) go(t.dataset.view);
+  });
+  $('#countPill').addEventListener('click', function () { go('set'); });
+  document.addEventListener('click', function (ev) {
+    var g = ev.target.closest('[data-goto]');
+    if (g) go(g.dataset.goto);
+  });
+
+  // Library
+  var qTimer = null;
+  $('#q').addEventListener('input', function (ev) {
+    clearTimeout(qTimer);
+    qTimer = setTimeout(function () { state.q = ev.target.value; renderCards(); }, 120);
+  });
+  $('#sort').addEventListener('change', function (ev) { state.sort = ev.target.value; renderCards(); });
+  $('#edChips').addEventListener('click', function (ev) {
+    var chip = ev.target.closest('.chip');
+    if (!chip) return;
+    var ed = chip.dataset.ed;
+    if (state.eds.has(ed)) state.eds.delete(ed); else state.eds.add(ed);
+    render();
+  });
+  $('#cards').addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-toggle]');
+    if (!btn) return;
+    var id = btn.dataset.toggle;
+    if (selIds().has(id)) {
+      removeBySrcId(id);
+      toast('Removed from set');
+    } else {
+      var p = PROMPTS.find(function (x) { return x.id === id; });
+      if (p) { addPrompt(p); toast('Added — ' + state.sel.length + ' in set'); }
+    }
+    render();
+  });
+  $('#addAllBtn').addEventListener('click', function () {
+    var ids = selIds();
+    var added = 0;
+    filtered().forEach(function (p) {
+      if (!ids.has(p.id)) { addPrompt(p); added++; }
+    });
+    toast('Added ' + added + (added === 1 ? ' prompt' : ' prompts') + ' — ' + state.sel.length + ' in set');
+    render();
+  });
+
+  // Filter sheet
+  $('#filtersBtn').addEventListener('click', openSheet);
+  $('#closeSheet').addEventListener('click', closeSheet);
+  $('#applyFilters').addEventListener('click', closeSheet);
+  $('#filterBackdrop').addEventListener('click', function (ev) {
+    if (ev.target === ev.currentTarget) closeSheet();
+  });
+  $('#clearFilters').addEventListener('click', function () {
+    state.eds.clear(); state.cats.clear(); state.types.clear();
+    renderSheet();
+  });
+  document.querySelector('.sheet-body').addEventListener('change', function (ev) {
+    var box = ev.target;
+    if (!box.dataset.fgroup) return;
+    var set = state[box.dataset.fgroup];
+    if (box.checked) set.add(box.value); else set.delete(box.value);
+    if (box.dataset.fgroup === 'eds') {
+      // drop category picks that no longer belong to a visible edition
+      if (state.eds.size) {
+        var valid = new Set();
+        PROMPTS.forEach(function (p) { if (state.eds.has(p.edition)) valid.add(p.category); });
+        state.cats.forEach(function (c) { if (!valid.has(c)) state.cats.delete(c); });
+      }
+    }
+    renderSheet();
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && !$('#filterBackdrop').hidden) closeSheet();
+  });
+
+  // My Set
+  function findIdx(uid) {
+    return state.sel.findIndex(function (s) { return s.uid === +uid; });
+  }
+  $('#setList').addEventListener('click', function (ev) {
+    var mv = ev.target.closest('[data-move]');
+    if (mv) {
+      var i = findIdx(mv.dataset.uid);
+      var j = mv.dataset.move === 'up' ? i - 1 : i + 1;
+      if (i > -1 && j > -1 && j < state.sel.length) {
+        var tmp = state.sel[i]; state.sel[i] = state.sel[j]; state.sel[j] = tmp;
+        render();
+      }
+      return;
+    }
+    var rm = ev.target.closest('[data-remove]');
+    if (rm) {
+      state.sel.splice(findIdx(rm.dataset.uid), 1);
+      render();
+      return;
+    }
+    var ed = ev.target.closest('[data-edit]');
+    if (ed) {
+      var box = document.querySelector('[data-editbox="' + ed.dataset.edit + '"]');
+      box.hidden = !box.hidden;
+      if (!box.hidden) box.querySelector('textarea').focus();
+      return;
+    }
+    var sv = ev.target.closest('[data-save-edit]');
+    if (sv) {
+      var idx = findIdx(sv.dataset.saveEdit);
+      var txt = document.querySelector('[data-editbox="' + sv.dataset.saveEdit + '"] textarea').value.trim();
+      if (idx > -1 && txt) { state.sel[idx].text = txt; render(); toast('Prompt updated'); }
+      return;
+    }
+    var cn = ev.target.closest('[data-cancel-edit]');
+    if (cn) document.querySelector('[data-editbox="' + cn.dataset.cancelEdit + '"]').hidden = true;
+  });
+  $('#setList').addEventListener('change', function (ev) {
+    var ta = ev.target.closest('[data-note]');
+    if (!ta) return;
+    var i = findIdx(ta.dataset.note);
+    if (i > -1) { state.sel[i].userNote = ta.value.trim(); save(); }
+  });
+
+  // Drag reordering (desktop)
+  var dragUid = null;
+  $('#setList').addEventListener('dragstart', function (ev) {
+    var li = ev.target.closest('.set-item');
+    if (!li) return;
+    dragUid = li.dataset.uid;
+    li.classList.add('dragging');
+    ev.dataTransfer.effectAllowed = 'move';
+    try { ev.dataTransfer.setData('text/plain', dragUid); } catch (e) { /* IE quirk */ }
+  });
+  $('#setList').addEventListener('dragover', function (ev) {
+    if (dragUid == null) return;
+    ev.preventDefault();
+    var over = ev.target.closest('.set-item');
+    var dragging = document.querySelector('.set-item.dragging');
+    if (!over || !dragging || over === dragging) return;
+    var rect = over.getBoundingClientRect();
+    var before = ev.clientY < rect.top + rect.height / 2;
+    over.parentNode.insertBefore(dragging, before ? over : over.nextSibling);
+  });
+  $('#setList').addEventListener('drop', function (ev) { ev.preventDefault(); });
+  $('#setList').addEventListener('dragend', function () {
+    if (dragUid == null) return;
+    var order = Array.prototype.map.call(document.querySelectorAll('#setList .set-item'), function (li) {
+      return +li.dataset.uid;
+    });
+    state.sel.sort(function (a, b) { return order.indexOf(a.uid) - order.indexOf(b.uid); });
+    dragUid = null;
+    render();
+  });
+
+  $('#clearBtn').addEventListener('click', function () {
+    if (state.sel.length && window.confirm('Remove all ' + state.sel.length + ' prompts from your set?')) {
+      state.sel = [];
+      render();
+    }
+  });
+  $('#addCustomBtn').addEventListener('click', function () {
+    $('#customForm').hidden = false;
+    $('#customText').focus();
+  });
+  $('#customCancel').addEventListener('click', function () { $('#customForm').hidden = true; });
+  $('#customForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var txt = $('#customText').value.trim();
+    if (!txt) { $('#customText').focus(); return; }
+    state.sel.push({
+      uid: uidCounter++, srcId: '', text: txt, edition: 'Custom',
+      category: $('#customCat').value.trim() || 'Custom', type: 'Custom', srcNote: '', userNote: ''
+    });
+    $('#customText').value = '';
+    $('#customCat').value = '';
+    $('#customForm').hidden = true;
+    toast('Custom prompt added');
+    render();
+  });
+
+  // Export bindings
+  function bindDoc(id, key) {
+    $(id).addEventListener('input', function (ev) { state.doc[key] = ev.target.value; save(); });
+  }
+  bindDoc('#docTitle', 'title');
+  bindDoc('#docSubtitle', 'subtitle');
+  bindDoc('#docFacilitator', 'facilitator');
+  bindDoc('#docOrg', 'org');
+  bindDoc('#docDate', 'date');
+
+  $('#formats').addEventListener('change', function (ev) {
+    if (ev.target.name === 'fmt') { state.exp.format = ev.target.value; renderExport(); save(); }
+  });
+  function bindOpt(id, key, prop) {
+    $(id).addEventListener('change', function (ev) {
+      state.exp[key] = prop === 'checked' ? ev.target.checked : ev.target.value;
+      renderExport(); save();
+    });
+  }
+  bindOpt('#optMeta', 'meta', 'checked');
+  bindOpt('#optIds', 'ids', 'checked');
+  bindOpt('#optNotes', 'notes', 'checked');
+  bindOpt('#optGroup', 'group', 'checked');
+  bindOpt('#optBreaks', 'breaks', 'checked');
+  bindOpt('#optLines', 'lines', 'value');
+  bindOpt('#agStart', 'agStart', 'value');
+  bindOpt('#agMins', 'agMins', 'value');
+  bindOpt('#agWelcome', 'agWelcome', 'checked');
+  bindOpt('#agClosing', 'agClosing', 'checked');
+
+  $('#exportBtn').addEventListener('click', function () { runExport(false); });
+  $('#printBtn').addEventListener('click', function () { runExport(true); });
+
+  /* ---------- init ---------- */
+
+  load();
+  // hydrate form fields from state
+  $('#docTitle').value = state.doc.title;
+  $('#docSubtitle').value = state.doc.subtitle;
+  $('#docFacilitator').value = state.doc.facilitator;
+  $('#docOrg').value = state.doc.org;
+  $('#docDate').value = state.doc.date;
+  $('#sort').value = state.sort;
+  document.querySelector('#formats input[value="' + state.exp.format + '"]').checked = true;
+  $('#optMeta').checked = state.exp.meta;
+  $('#optIds').checked = state.exp.ids;
+  $('#optNotes').checked = state.exp.notes;
+  $('#optGroup').checked = state.exp.group;
+  $('#optBreaks').checked = state.exp.breaks;
+  $('#optLines').value = String(state.exp.lines);
+  $('#agStart').value = state.exp.agStart;
+  $('#agMins').value = state.exp.agMins;
+  $('#agWelcome').checked = state.exp.agWelcome;
+  $('#agClosing').checked = state.exp.agClosing;
+  render();
+  renderExport();
+})();
+
+</script>
+</body>
+</html>
