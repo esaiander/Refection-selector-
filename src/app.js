@@ -425,13 +425,34 @@
     };
   }
 
+  /* When published as a claude.ai artifact, script-driven downloads are inert;
+     files must be offered through the viewer's `downloads` capability. The
+     standalone index.html (no `claude` global) keeps the plain anchor click. */
+  var downloadsReady = (typeof claude !== 'undefined' && claude && claude.use)
+    ? claude.use('downloads').catch(function () { return null; })
+    : Promise.resolve(null);
+
   function download(name, blob) {
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    downloadsReady.then(function (dl) {
+      if (dl) {
+        dl.save({ filename: name, data: blob }).then(function () {
+          toast('Saved ' + name);
+        }).catch(function (e) {
+          var code = e && e.code;
+          if (code === 'declined') toast('Save canceled');
+          else if (code === 'rate_limited') toast('One save at a time — try again in a moment');
+          else toast('Could not save ' + name + (e && e.message ? ' — ' + e.message : ''));
+        });
+        return;
+      }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      toast('Downloaded ' + name);
+    });
   }
 
   /* Text measurement for PDF line wrapping: canvas metrics with metric-compatible
@@ -478,7 +499,6 @@
       bytes = X.buildAgendaDocx(items, o);
     }
     download(name, new Blob([bytes], { type: mime }));
-    toast('Downloaded ' + name);
   }
 
   /* ---------- export preview ---------- */
