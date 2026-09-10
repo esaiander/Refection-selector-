@@ -17,6 +17,21 @@
     'Custom': '#5E6E69'
   };
 
+  var DEPTH_LABELS = { 1: 'Warm-up', 2: 'Explore', 3: 'Probe', 4: 'Reimagine' };
+  var DEPTH_DESC = {
+    1: 'ease in with stories and strengths',
+    2: 'map the current state',
+    3: 'examine tensions and evidence',
+    4: 'imagine changes and commit'
+  };
+  function depthMeter(d) {
+    if (!d) return '';
+    var bars = '';
+    for (var i = 1; i <= 4; i++) bars += '<i' + (i <= d ? ' class="on"' : '') + '></i>';
+    return '<span class="depth" title="Depth ' + d + ' of 4 — ' + DEPTH_LABELS[d] + ': ' + DEPTH_DESC[d] + '">' +
+      bars + '</span>';
+  }
+
   // SELN Framework categories (meta.framework_categories), colored by position
   var FW_CATS = META.framework_categories || [];
   var FW_PALETTE = ['#0E6E5C', '#B0641C', '#3D5A9E', '#A84465', '#6C4AB0', '#2C6E8F', '#8A6A1F', '#A6432C'];
@@ -30,8 +45,8 @@
 
   var uidCounter = 1;
   var state = {
-    q: '', eds: new Set(), fws: new Set(), types: new Set(), sort: 'guide',
-    view: 'library', condense: true,
+    q: '', eds: new Set(), fws: new Set(), types: new Set(), depths: new Set(), sort: 'guide',
+    view: 'library', condense: 'sim', // 'all' | 'sim' (fold rewordings) | 'theme'
     sel: [],
     doc: { title: '', subtitle: '', facilitator: '', org: '', date: new Date().toISOString().slice(0, 10) },
     exp: {
@@ -53,7 +68,8 @@
       if (!raw) return;
       var d = JSON.parse(raw);
       if (Array.isArray(d.sel)) state.sel = d.sel;
-      if (typeof d.condense === 'boolean') state.condense = d.condense;
+      if (typeof d.condense === 'boolean') state.condense = d.condense ? 'sim' : 'all';
+      else if (d.condense === 'all' || d.condense === 'sim' || d.condense === 'theme') state.condense = d.condense;
       if (d.doc) Object.assign(state.doc, d.doc);
       if (d.exp) {
         Object.assign(state.exp, d.exp);
@@ -66,10 +82,11 @@
       }
       state.sel.forEach(function (s) {
         uidCounter = Math.max(uidCounter, (s.uid || 0) + 1);
-        // backfill the framework category on sets saved before it existed
-        if (s.fw == null) {
+        // backfill fields on sets saved before they existed
+        if (s.fw == null || s.depth === undefined) {
           var p = s.srcId && PROMPTS.find(function (x) { return x.id === s.srcId; });
-          s.fw = p ? p.framework_category : '';
+          if (s.fw == null) s.fw = p ? p.framework_category : '';
+          if (s.depth === undefined) s.depth = p ? p.depth : null;
         }
       });
     } catch (e) { /* corrupted store — start fresh */ }
@@ -87,7 +104,7 @@
     state.sel.push({
       uid: uidCounter++, srcId: p.id, text: p.prompt, edition: p.edition,
       fw: p.framework_category || '', category: p.category, type: p.type,
-      srcNote: p.notes || '', userNote: ''
+      depth: p.depth || null, srcNote: p.notes || '', userNote: ''
     });
   }
 
@@ -103,6 +120,7 @@
       if (state.eds.size && !state.eds.has(p.edition)) return false;
       if (state.types.size && !state.types.has(p.type)) return false;
       if (state.fws.size && !state.fws.has(p.framework_category)) return false;
+      if (state.depths.size && !state.depths.has(String(p.depth))) return false;
       if (q) {
         var hay = (p.prompt + ' ' + p.framework_category + ' ' + p.category + ' ' + p.id + ' ' +
           p.edition + ' ' + (p.notes || '')).toLowerCase();
@@ -120,10 +138,11 @@
     }
     else if (s === 'type') list.sort(function (a, b) { return (TYPE_ORDER[a.type] - TYPE_ORDER[b.type]) || a._i - b._i; });
     else if (s === 'edition') list.sort(function (a, b) { return (ED_ORDER[a.edition] - ED_ORDER[b.edition]) || a._i - b._i; });
+    else if (s === 'depth') list.sort(function (a, b) { return (a.depth - b.depth) || a._i - b._i; });
     return list;
   }
 
-  function filterCount() { return state.eds.size + state.fws.size + state.types.size; }
+  function filterCount() { return state.eds.size + state.fws.size + state.types.size + state.depths.size; }
 
   /* ---------- rendering ---------- */
 
@@ -171,15 +190,23 @@
     }).join('');
   }
 
-  var openSims = new Set(); // similarity clusters expanded in place
+  var openSims = new Set(); // fold clusters expanded in place
 
-  /* Collapse near-duplicate wordings: keep the first cluster member in view,
-     count the rest behind a "+N similar" chip (unless the cluster is expanded). */
+  /* The fold key for the active mode: exact rewordings (simKey) or broader
+     themes (themeKey, which subsumes the rewording clusters). */
+  function foldKeyOf(p) {
+    if (state.condense === 'sim') return p.simKey;
+    if (state.condense === 'theme') return p.themeKey != null ? p.themeKey : p.simKey;
+    return null;
+  }
+
+  /* Collapse overlapping prompts: keep the first cluster member in view,
+     count the rest behind an expandable chip. */
   function computeVisible(list) {
-    if (!state.condense) return { visible: list, extraByKey: {}, condensed: 0 };
+    if (state.condense === 'all') return { visible: list, extraByKey: {}, condensed: 0 };
     var visible = [], extraByKey = {}, condensed = 0, seen = {};
     list.forEach(function (p) {
-      var k = p.simKey;
+      var k = foldKeyOf(p);
       if (k == null || openSims.has(k)) { visible.push(p); return; }
       if (seen[k] === undefined) { seen[k] = true; visible.push(p); }
       else { extraByKey[k] = (extraByKey[k] || 0) + 1; condensed++; }
@@ -187,33 +214,38 @@
     return { visible: visible, extraByKey: extraByKey, condensed: condensed };
   }
 
-  /* Which field the current sort groups by (null = no section headers). */
-  function sectionField() {
-    if (state.sort === 'category') return 'framework_category';
-    if (state.sort === 'edition' || state.sort === 'guide') return 'edition';
-    if (state.sort === 'type') return 'type';
+  /* How the current sort sections the list (null = no section headers). */
+  function sectionValueFn() {
+    if (state.sort === 'category') return function (p) { return p.framework_category || 'Other'; };
+    if (state.sort === 'edition' || state.sort === 'guide') return function (p) { return p.edition; };
+    if (state.sort === 'type') return function (p) { return p.type; };
+    if (state.sort === 'depth') return function (p) { return DEPTH_LABELS[p.depth] || 'Other'; };
     return null;
   }
-  function sectionColor(field, value) {
-    if (field === 'framework_category') return FW_COLORS[value] || '#5E6E69';
-    if (field === 'edition') return ED_COLORS[value] || '#5E6E69';
-    return 'var(--mute)';
+  function sectionColor(value) {
+    if (state.sort === 'category') return FW_COLORS[value] || '#5E6E69';
+    if (state.sort === 'edition' || state.sort === 'guide') return ED_COLORS[value] || '#5E6E69';
+    return 'var(--accent)';
   }
 
   function cardHtml(p, ids, extraByKey) {
     var added = ids.has(p.id);
-    var open = p.simKey != null && openSims.has(p.simKey);
+    var k = foldKeyOf(p);
+    var open = k != null && openSims.has(k);
+    var themed = state.condense === 'theme';
     var simBtn = '';
-    if (state.condense && p.simKey != null) {
-      if (open) simBtn = '<button type="button" class="btn sim-btn" data-sim="' + p.simKey + '">Hide similar</button>';
-      else if (extraByKey[p.simKey]) {
-        simBtn = '<button type="button" class="btn sim-btn" data-sim="' + p.simKey + '">+' +
-          extraByKey[p.simKey] + ' similar</button>';
+    if (k != null) {
+      if (open) {
+        simBtn = '<button type="button" class="btn sim-btn" data-sim="' + k + '">' +
+          (themed ? 'Hide theme' : 'Hide similar') + '</button>';
+      } else if (extraByKey[k]) {
+        simBtn = '<button type="button" class="btn sim-btn" data-sim="' + k + '">+' + extraByKey[k] +
+          (themed ? ' on this theme' : ' similar') + '</button>';
       }
     }
     return '<article class="pcard' + (added ? ' is-selected' : '') + (open ? ' is-variant' : '') + '">' +
       '<div class="pcard-head">' + badge(p.edition) +
-      '<span class="ttag">' + esc(p.type) + '</span>' +
+      '<span class="ttag">' + esc(p.type) + '</span>' + depthMeter(p.depth) +
       '<span class="pid">' + esc(p.id) + '</span></div>' +
       '<div class="pcard-cat"><b class="fw-name" style="--ed:' + (FW_COLORS[p.framework_category] || '#5E6E69') + '">' +
       esc(p.framework_category) + '</b> · ' + esc(p.category) + '</div>' +
@@ -229,25 +261,25 @@
     var visible = cv.visible;
     var ids = selIds();
     $('#resultCount').textContent = visible.length + ' of ' + PROMPTS.length + ' prompts' +
-      (cv.condensed ? ' · ' + cv.condensed + ' similar collapsed' : '');
+      (cv.condensed ? ' · ' + cv.condensed + (state.condense === 'theme' ? ' folded into themes' : ' similar collapsed') : '');
     $('#addAllBtn').hidden = visible.length === 0 || visible.every(function (p) { return ids.has(p.id); });
     if (!visible.length) {
       $('#cards').innerHTML = '<div class="lib-empty">No prompts match — try clearing a filter or changing your search.</div>';
       return;
     }
-    var field = sectionField();
+    var valueFn = sectionValueFn();
     var html = '';
-    if (field) {
-      // sorted lists are contiguous by the section field, so count each run
+    if (valueFn) {
+      // sorted lists are contiguous by the section value, so count each run
       var runs = [];
       visible.forEach(function (p) {
-        var v = p[field] || 'Other';
+        var v = valueFn(p);
         if (!runs.length || runs[runs.length - 1].value !== v) runs.push({ value: v, items: [] });
         runs[runs.length - 1].items.push(p);
       });
       runs.forEach(function (r) {
         var unadded = r.items.some(function (p) { return !ids.has(p.id); });
-        html += '<div class="sec-head" style="--ed:' + sectionColor(field, r.value) + '"><b>' + esc(r.value) +
+        html += '<div class="sec-head" style="--ed:' + sectionColor(r.value) + '"><b>' + esc(r.value) +
           '</b><span class="sec-n">' + r.items.length + '</span>' +
           (unadded ? '<button type="button" class="btn btn-ghost" data-addsec="' + esc(r.value) + '">Add shown</button>' : '') +
           '</div>';
@@ -282,7 +314,7 @@
         '<div class="item-head">' +
         '<span class="drag-handle" aria-hidden="true">⠿</span>' +
         '<span class="item-num">' + (i + 1) + '</span>' +
-        badge(s.edition) +
+        badge(s.edition) + depthMeter(s.depth) +
         '<span class="pcard-cat">' + esc(s.fw ? s.fw + ' · ' + s.category : s.category) + '</span>' +
         (s.srcId ? '<span class="pid">' + esc(s.srcId) + '</span>' : '<span class="pid">custom</span>') +
         '</div>' +
@@ -365,7 +397,16 @@
       (checked ? ' checked' : '') + '>' + label + '</label>';
   }
 
+  var DEPTH_COUNTS = {};
+  PROMPTS.forEach(function (p) { DEPTH_COUNTS[p.depth] = (DEPTH_COUNTS[p.depth] || 0) + 1; });
+
   function renderSheet() {
+    $('#fDepths').innerHTML = [1, 2, 3, 4].map(function (dNum) {
+      return checkRow('depths', String(dNum),
+        depthMeter(dNum) + ' ' + esc(DEPTH_LABELS[dNum]) +
+        ' <span style="color:var(--mute)">— ' + DEPTH_DESC[dNum] + ' (' + (DEPTH_COUNTS[dNum] || 0) + ')</span>',
+        state.depths.has(String(dNum)));
+    }).join('');
     $('#fTypes').innerHTML = META.types.map(function (t) {
       return checkRow('types', t, esc(t), state.types.has(t));
     }).join('');
@@ -389,9 +430,16 @@
       return {
         text: s.text, id: s.srcId || '', edition: s.edition, fw: s.fw || '',
         category: s.category, type: s.type === 'Custom' ? '' : s.type,
+        depth: s.depth || null, arc: s.depth ? DEPTH_LABELS[s.depth] : 'Other',
         srcNote: s.srcNote, userNote: s.userNote
       };
     });
+    if (e.groupBy === 'arc') {
+      // an arc always runs shallow -> deep regardless of the set's order
+      items = items.map(function (it, i) { return { it: it, i: i }; })
+        .sort(function (a, b) { return ((a.it.depth || 9) - (b.it.depth || 9)) || (a.i - b.i); })
+        .map(function (x) { return x.it; });
+    }
     if (e.groupBy) {
       var order = [], map = {};
       items.forEach(function (it) {
@@ -665,8 +713,9 @@
     if (state.fws.has(fw)) state.fws.delete(fw); else state.fws.add(fw);
     render();
   });
-  $('#condenseChk').addEventListener('change', function (ev) {
-    state.condense = ev.target.checked;
+  $('#condenseSel').addEventListener('change', function (ev) {
+    state.condense = ev.target.value;
+    openSims.clear();
     render();
   });
   $('#cards').addEventListener('click', function (ev) {
@@ -679,11 +728,11 @@
     }
     var secBtn = ev.target.closest('[data-addsec]');
     if (secBtn) {
-      var field = sectionField();
+      var valueFn = sectionValueFn();
       var ids2 = selIds();
       var added = 0;
       computeVisible(filtered()).visible.forEach(function (p) {
-        if ((p[field] || 'Other') === secBtn.dataset.addsec && !ids2.has(p.id)) { addPrompt(p); added++; }
+        if (valueFn && valueFn(p) === secBtn.dataset.addsec && !ids2.has(p.id)) { addPrompt(p); added++; }
       });
       toast('Added ' + added + (added === 1 ? ' prompt' : ' prompts') + ' — ' + state.sel.length + ' in set');
       render();
@@ -719,7 +768,7 @@
     if (ev.target === ev.currentTarget) closeSheet();
   });
   $('#clearFilters').addEventListener('click', function () {
-    state.eds.clear(); state.fws.clear(); state.types.clear();
+    state.eds.clear(); state.fws.clear(); state.types.clear(); state.depths.clear();
     renderSheet();
   });
   document.querySelector('.sheet-body').addEventListener('change', function (ev) {
@@ -732,6 +781,7 @@
   document.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Escape') return;
     if (!$('#previewBackdrop').hidden) closePreview();
+    else if (!$('#seriesBackdrop').hidden) closeSeries();
     else if (!$('#filterBackdrop').hidden) closeSheet();
   });
 
@@ -811,6 +861,15 @@
     render();
   });
 
+  $('#arcBtn').addEventListener('click', function () {
+    state.sel = state.sel
+      .map(function (s, i) { return { s: s, i: i }; })
+      .sort(function (a, b) { return ((a.s.depth || 9) - (b.s.depth || 9)) || (a.i - b.i); })
+      .map(function (x) { return x.s; });
+    toast('Arranged shallow → deep');
+    render();
+  });
+
   $('#clearBtn').addEventListener('click', function () {
     if (state.sel.length && window.confirm('Remove all ' + state.sel.length + ' prompts from your set?')) {
       state.sel = [];
@@ -835,6 +894,74 @@
     $('#customForm').hidden = true;
     toast('Custom prompt added');
     render();
+  });
+
+  /* ---------- series builder ---------- */
+
+  var srPicks = [];
+  function srPool() {
+    var ed = $('#srEd').value, cat = $('#srCat').value;
+    return PROMPTS.filter(function (p) {
+      return (!ed || p.edition === ed) && (!cat || p.framework_category === cat);
+    });
+  }
+  function rollSeries() {
+    var pool = srPool();
+    var inSet = selIds();
+    srPicks = [];
+    [1, 2, 3, 4].forEach(function (dNum) {
+      var cands = pool.filter(function (p) {
+        return p.depth === dNum && p.type !== 'Closing' && !inSet.has(p.id);
+      });
+      srPicks.push(cands.length ? cands[Math.floor(Math.random() * cands.length)] : null);
+    });
+    if ($('#srClosing').checked) {
+      var closers = pool.filter(function (p) { return p.type === 'Closing' && !inSet.has(p.id); });
+      if (!closers.length) closers = PROMPTS.filter(function (p) { return p.type === 'Closing' && !inSet.has(p.id); });
+      srPicks.push(closers.length ? closers[Math.floor(Math.random() * closers.length)] : null);
+    }
+    renderSrList();
+  }
+  function renderSrList() {
+    $('#srList').innerHTML = srPicks.map(function (p, i) {
+      var slot = i < 4 ? DEPTH_LABELS[i + 1] : 'Closing';
+      var head = '<span class="sr-tag">' + (i < 4 ? depthMeter(i + 1) + ' ' : '') + slot + '</span>';
+      if (!p) return '<li class="sr-item"><div>' + head + '</div><p class="sr-none">No unused ' + slot.toLowerCase() + ' prompt matches this focus.</p></li>';
+      return '<li class="sr-item"><div>' + head + '</div>' +
+        '<p class="sr-text">' + esc(p.prompt) + '</p>' +
+        '<p class="sr-meta">' + esc(p.id + ' · ' + p.edition + ' · ' + p.framework_category) + '</p></li>';
+    }).join('');
+    $('#srAdd').disabled = !srPicks.some(Boolean);
+  }
+  function openSeries() {
+    if (!$('#srEd').options.length) {
+      $('#srEd').innerHTML = '<option value="">Any edition</option>' + META.editions.map(function (e) {
+        return '<option value="' + esc(e.name) + '">' + esc(e.name) + '</option>';
+      }).join('');
+      $('#srCat').innerHTML = '<option value="">Any category</option>' + FW_CATS.map(function (c) {
+        return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+      }).join('');
+    }
+    rollSeries();
+    $('#seriesBackdrop').hidden = false;
+  }
+  function closeSeries() { $('#seriesBackdrop').hidden = true; }
+
+  $('#seriesBtn').addEventListener('click', openSeries);
+  $('#closeSeries').addEventListener('click', closeSeries);
+  $('#seriesBackdrop').addEventListener('click', function (ev) {
+    if (ev.target === ev.currentTarget) closeSeries();
+  });
+  $('#srShuffle').addEventListener('click', rollSeries);
+  $('#srEd').addEventListener('change', rollSeries);
+  $('#srCat').addEventListener('change', rollSeries);
+  $('#srClosing').addEventListener('change', rollSeries);
+  $('#srAdd').addEventListener('click', function () {
+    var added = 0;
+    srPicks.forEach(function (p) { if (p) { addPrompt(p); added++; } });
+    closeSeries();
+    toast('Added a ' + added + '-prompt series — ' + state.sel.length + ' in set');
+    go('set');
   });
 
   // Export bindings
@@ -893,7 +1020,7 @@
   $('#docOrg').value = state.doc.org;
   $('#docDate').value = state.doc.date;
   $('#sort').value = state.sort;
-  $('#condenseChk').checked = state.condense;
+  $('#condenseSel').value = state.condense;
   document.querySelector('#formats input[value="' + state.exp.format + '"]').checked = true;
   $('#optNumbers').checked = state.exp.numbers;
   $('#optIds').checked = state.exp.ids;

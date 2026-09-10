@@ -19,12 +19,21 @@ it anywhere (e.g. GitHub Pages).
   (Opener / Core Question / Follow-up / Closing) via quick chips or the filter
   sheet; sort by guide order, A–Z, category, type, or edition. One-tap add, or
   "Add all shown" for a filtered view. Each prompt also keeps its original
-  fine-grained category for display and export. Near-duplicate wordings
-  (detected at build time by token overlap) are condensed behind a
-  "+N similar" chip — expandable per cluster, and switchable off entirely —
-  and sorted views show section headers with per-section counts and their own
-  "Add shown" button. If your set contains two variants of the same question,
-  the second one is flagged in My Set.
+  fine-grained category for display and export. Overlapping prompts fold at
+  two strengths: near-duplicate wordings (detected at build time by token
+  overlap) collapse behind a "+N similar" chip, or fold by theme — the
+  guide's own per-edition category blocks — which condenses the whole
+  library to ~50 cards (State Team drops from 72 to 8). Both are expandable
+  per cluster and switchable off. Sorted views show section headers with
+  per-section counts and their own "Add shown" button, and a set containing
+  two variants of the same question flags the second one in My Set.
+
+  Every prompt is also classified by facilitation depth — Warm-up, Explore,
+  Probe, Reimagine — shown as a rising four-bar meter on each card, and
+  usable as a filter, a sort ("Shallow → deep"), and an export grouping.
+  The "Build a series" tool composes an arc from any edition/category focus:
+  one prompt per depth plus an optional closing, shuffleable before adding;
+  "Arrange as arc" reorders an existing set the same way.
 - **My Set** — reorder by drag (or arrow buttons on mobile), reword any prompt,
   attach facilitator notes, write custom prompts, and clear or continue to export.
   Your set and settings persist in the browser between visits.

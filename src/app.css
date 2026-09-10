@@ -372,6 +372,22 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .pid { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--mute); }
 
+/* depth meter: four rising bars, filled with a gradient of intensity */
+.depth { display: inline-flex; align-items: flex-end; gap: 2.5px; height: 11px; cursor: help; }
+
+.depth i { width: 3.5px; border-radius: 2px; background: var(--line); }
+
+.depth i:nth-child(1) { height: 4px; }
+.depth i:nth-child(2) { height: 6.5px; }
+.depth i:nth-child(3) { height: 9px; }
+.depth i:nth-child(4) { height: 11px; }
+
+.depth i.on { background: var(--accent); }
+.depth i.on:nth-child(1) { opacity: 0.45; }
+.depth i.on:nth-child(2) { opacity: 0.62; }
+.depth i.on:nth-child(3) { opacity: 0.8; }
+.depth i.on:nth-child(4) { opacity: 1; }
+
 .pcard-cat { font-size: 12px; color: var(--mute); }
 
 .fw-name {
@@ -676,6 +692,33 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .checks .check { padding: 4px 0; }
 
 .checks-scroll { max-height: 220px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+
+/* ---------- series builder ---------- */
+
+.sr-intro { max-width: 52ch; }
+
+.sr-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.sr-item { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+
+.sr-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+
+.sr-text { font-family: var(--serif); font-size: 15px; margin: 5px 0 3px; }
+
+.sr-meta { font-size: 11.5px; color: var(--mute); margin: 0; }
+
+.sr-none { font-size: 13px; font-style: italic; color: var(--mute); margin: 5px 0 0; }
+
+.sr-foot { justify-content: space-between; }
 
 /* ---------- export preview ----------
    The preview shows printed pages and slides, so it commits to the document's

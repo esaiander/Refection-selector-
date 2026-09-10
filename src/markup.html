@@ -23,19 +23,23 @@
             <option value="guide">Guide order</option>
             <option value="az">A → Z</option>
             <option value="category">Category</option>
+            <option value="depth">Shallow → deep</option>
             <option value="type">Type</option>
             <option value="edition">Edition</option>
           </select>
         </label>
+        <button type="button" class="btn" id="seriesBtn">✦ Build a series</button>
       </div>
       <div class="chips" id="edChips" role="group" aria-label="Filter by edition"></div>
       <div class="chips chips-fw" id="fwChips" role="group" aria-label="Filter by category"></div>
       <div class="result-row">
         <span class="result-count" id="resultCount"></span>
         <span class="result-actions">
-          <label class="check condense-chk" title="Collapse near-duplicate wordings behind a '+N similar' chip">
-            <input type="checkbox" id="condenseChk" checked>Condense similar
-          </label>
+          <select id="condenseSel" class="select" aria-label="Fold similar prompts" title="Fold overlapping prompts behind an expandable chip">
+            <option value="all">Show every prompt</option>
+            <option value="sim" selected>Fold rewordings</option>
+            <option value="theme">Fold by theme</option>
+          </select>
           <button type="button" class="btn btn-ghost" id="addAllBtn">Add all shown</button>
         </span>
       </div>
@@ -53,6 +57,7 @@
       <ol class="set-list" id="setList"></ol>
       <div class="set-actions" id="setActions" hidden>
         <button type="button" class="btn" id="addCustomBtn">+ Custom prompt</button>
+        <button type="button" class="btn" id="arcBtn" title="Reorder shallow → deep: warm-ups first, reimagine and closings last">Arrange as arc</button>
         <button type="button" class="btn btn-danger-ghost" id="clearBtn">Clear all</button>
         <button type="button" class="btn btn-primary" data-goto="export">Continue to export →</button>
       </div>
@@ -103,6 +108,7 @@
               <option value="fw">By category</option>
               <option value="category">By original category</option>
               <option value="edition">By edition</option>
+              <option value="arc">By depth — builds an arc</option>
             </select>
           </label>
           <div class="fld"><span>Show with each prompt</span></div>
@@ -159,12 +165,35 @@
       <button type="button" class="btn icon-btn" id="closeSheet" aria-label="Close filters">✕</button>
     </div>
     <div class="sheet-body">
+      <div class="fgroup"><h3>Depth</h3><div id="fDepths" class="checks"></div></div>
       <div class="fgroup"><h3>Type</h3><div id="fTypes" class="checks"></div></div>
       <div class="fgroup"><h3>Edition</h3><div id="fEds" class="checks"></div></div>
       <div class="fgroup"><h3>Category <span class="hint">— SELN Framework for Employment</span></h3><div id="fCats" class="checks"></div></div>
     </div>
     <div class="sheet-foot">
       <button type="button" class="btn btn-primary" id="applyFilters">Show results</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="seriesBackdrop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Build a series">
+    <div class="sheet-head">
+      <b>Build a series</b>
+      <button type="button" class="btn icon-btn" id="closeSeries" aria-label="Close series builder">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="view-sub sr-intro">Compose an arc that starts easy and deepens: a warm-up, an explore, a probe, and a reimagine prompt — plus an optional closing. Shuffle until the picks feel right, then add them to your set in order.</p>
+      <div class="fld-row">
+        <label class="fld"><span>Edition</span><select id="srEd" class="select"></select></label>
+        <label class="fld"><span>Category</span><select id="srCat" class="select"></select></label>
+      </div>
+      <label class="check"><input type="checkbox" id="srClosing" checked>End with a closing prompt</label>
+      <ol class="sr-list" id="srList"></ol>
+    </div>
+    <div class="sheet-foot sr-foot">
+      <button type="button" class="btn" id="srShuffle">Shuffle picks</button>
+      <button type="button" class="btn btn-primary" id="srAdd">Add to set</button>
     </div>
   </div>
 </div>

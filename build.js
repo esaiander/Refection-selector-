@@ -50,6 +50,49 @@ function tagSimilarPrompts(prompts) {
 const simClusters = tagSimilarPrompts(data.prompts);
 console.log('similar-prompt clusters:', simClusters);
 
+/* Coarser thematic folding: a theme is one of the guide's own per-edition
+   category blocks (e.g. State Team's 10 "Provider Capacity & Support"
+   prompts). Lexical chaining was tried and merged unrelated blocks, so
+   themes stay exactly the blocks the guide authors designed. */
+function tagThemes(prompts) {
+  const blocks = {};
+  prompts.forEach((p, i) => {
+    const k = p.edition + '|' + p.category;
+    (blocks[k] = blocks[k] || []).push(i);
+  });
+  let key = 0;
+  Object.values(blocks).filter((b) => b.length > 1).forEach((b) => {
+    b.forEach((i) => { prompts[i].themeKey = key; });
+    key++;
+  });
+  return key;
+}
+console.log('theme clusters:', tagThemes(data.prompts));
+
+/* Classify each prompt's facilitation depth (1 warm-up · 2 explore · 3 probe ·
+   4 reimagine) from its type and linguistic cues. Story invitations classify
+   first — they are the low-risk entry move regardless of topic. */
+function tagDepth(prompts) {
+  const D1 = /^(tell us|describe|think about)|a time when|a moment when|working well|worked (really )?well|success|draws you|surprised|excited|best experience|most helpful|proud/;
+  const D4 = /if you could|redesign|what would .{0,50}look like|would you (try|change|invest|want)|experiment|pilot|no consequences|constraint|ready to question|had the power|would that look|ideal|want to (try|see created|be in|explore)|next year/;
+  const D3 = /how do you know|what (made|makes)|barrier|conflict|breaking down|missing|unintentionally|mixed messages|doubt|assumption|balance|versus|complicat|restrict|hinder|struggl|stuck|\bgaps?\b|challeng|rarely used|distinguish/;
+  prompts.forEach((p) => {
+    const t = p.prompt.toLowerCase();
+    p.depth = p.type === 'Opener' ? 1
+      : p.type === 'Closing' ? 4
+      : D1.test(t) ? 1
+      : D4.test(t) ? 4
+      : D3.test(t) ? 3
+      : 2;
+  });
+}
+tagDepth(data.prompts);
+{
+  const dist = {};
+  data.prompts.forEach((p) => { dist[p.depth] = (dist[p.depth] || 0) + 1; });
+  console.log('depth distribution:', JSON.stringify(dist));
+}
+
 // <-escape so no "</script>" sequence can terminate the inline script early
 const dataJs = JSON.stringify(data).replace(/</g, '\\u003c');
 
