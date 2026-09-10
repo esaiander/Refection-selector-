@@ -31,7 +31,7 @@
   var uidCounter = 1;
   var state = {
     q: '', eds: new Set(), fws: new Set(), types: new Set(), sort: 'guide',
-    view: 'library',
+    view: 'library', condense: true,
     sel: [],
     doc: { title: '', subtitle: '', facilitator: '', org: '', date: new Date().toISOString().slice(0, 10) },
     exp: {
@@ -44,7 +44,7 @@
   var STORE_KEY = 'seln-prompt-studio-v1';
   function save() {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify({ sel: state.sel, doc: state.doc, exp: state.exp }));
+      localStorage.setItem(STORE_KEY, JSON.stringify({ sel: state.sel, doc: state.doc, exp: state.exp, condense: state.condense }));
     } catch (e) { /* storage unavailable — session-only */ }
   }
   function load() {
@@ -53,6 +53,7 @@
       if (!raw) return;
       var d = JSON.parse(raw);
       if (Array.isArray(d.sel)) state.sel = d.sel;
+      if (typeof d.condense === 'boolean') state.condense = d.condense;
       if (d.doc) Object.assign(state.doc, d.doc);
       if (d.exp) {
         Object.assign(state.exp, d.exp);
@@ -170,30 +171,96 @@
     }).join('');
   }
 
+  var openSims = new Set(); // similarity clusters expanded in place
+
+  /* Collapse near-duplicate wordings: keep the first cluster member in view,
+     count the rest behind a "+N similar" chip (unless the cluster is expanded). */
+  function computeVisible(list) {
+    if (!state.condense) return { visible: list, extraByKey: {}, condensed: 0 };
+    var visible = [], extraByKey = {}, condensed = 0, seen = {};
+    list.forEach(function (p) {
+      var k = p.simKey;
+      if (k == null || openSims.has(k)) { visible.push(p); return; }
+      if (seen[k] === undefined) { seen[k] = true; visible.push(p); }
+      else { extraByKey[k] = (extraByKey[k] || 0) + 1; condensed++; }
+    });
+    return { visible: visible, extraByKey: extraByKey, condensed: condensed };
+  }
+
+  /* Which field the current sort groups by (null = no section headers). */
+  function sectionField() {
+    if (state.sort === 'category') return 'framework_category';
+    if (state.sort === 'edition' || state.sort === 'guide') return 'edition';
+    if (state.sort === 'type') return 'type';
+    return null;
+  }
+  function sectionColor(field, value) {
+    if (field === 'framework_category') return FW_COLORS[value] || '#5E6E69';
+    if (field === 'edition') return ED_COLORS[value] || '#5E6E69';
+    return 'var(--mute)';
+  }
+
+  function cardHtml(p, ids, extraByKey) {
+    var added = ids.has(p.id);
+    var open = p.simKey != null && openSims.has(p.simKey);
+    var simBtn = '';
+    if (state.condense && p.simKey != null) {
+      if (open) simBtn = '<button type="button" class="btn sim-btn" data-sim="' + p.simKey + '">Hide similar</button>';
+      else if (extraByKey[p.simKey]) {
+        simBtn = '<button type="button" class="btn sim-btn" data-sim="' + p.simKey + '">+' +
+          extraByKey[p.simKey] + ' similar</button>';
+      }
+    }
+    return '<article class="pcard' + (added ? ' is-selected' : '') + (open ? ' is-variant' : '') + '">' +
+      '<div class="pcard-head">' + badge(p.edition) +
+      '<span class="ttag">' + esc(p.type) + '</span>' +
+      '<span class="pid">' + esc(p.id) + '</span></div>' +
+      '<div class="pcard-cat"><b class="fw-name" style="--ed:' + (FW_COLORS[p.framework_category] || '#5E6E69') + '">' +
+      esc(p.framework_category) + '</b> · ' + esc(p.category) + '</div>' +
+      '<p class="pcard-text">' + esc(p.prompt) + '</p>' +
+      (p.notes ? '<p class="pcard-note">' + esc(p.notes) + '</p>' : '') +
+      '<div class="pcard-foot">' + simBtn + '<button type="button" class="btn add-btn' + (added ? ' is-added' : '') +
+      '" data-toggle="' + esc(p.id) + '">' + (added ? 'Added ✓' : 'Add') + '</button></div>' +
+      '</article>';
+  }
+
   function renderCards() {
-    var list = filtered();
+    var cv = computeVisible(filtered());
+    var visible = cv.visible;
     var ids = selIds();
-    $('#resultCount').textContent = list.length + ' of ' + PROMPTS.length + ' prompts';
-    $('#addAllBtn').hidden = list.length === 0 || list.every(function (p) { return ids.has(p.id); });
-    if (!list.length) {
+    $('#resultCount').textContent = visible.length + ' of ' + PROMPTS.length + ' prompts' +
+      (cv.condensed ? ' · ' + cv.condensed + ' similar collapsed' : '');
+    $('#addAllBtn').hidden = visible.length === 0 || visible.every(function (p) { return ids.has(p.id); });
+    if (!visible.length) {
       $('#cards').innerHTML = '<div class="lib-empty">No prompts match — try clearing a filter or changing your search.</div>';
       return;
     }
-    $('#cards').innerHTML = list.map(function (p) {
-      var added = ids.has(p.id);
-      return '<article class="pcard' + (added ? ' is-selected' : '') + '">' +
-        '<div class="pcard-head">' + badge(p.edition) +
-        '<span class="ttag">' + esc(p.type) + '</span>' +
-        '<span class="pid">' + esc(p.id) + '</span></div>' +
-        '<div class="pcard-cat"><b class="fw-name" style="--ed:' + (FW_COLORS[p.framework_category] || '#5E6E69') + '">' +
-        esc(p.framework_category) + '</b> · ' + esc(p.category) + '</div>' +
-        '<p class="pcard-text">' + esc(p.prompt) + '</p>' +
-        (p.notes ? '<p class="pcard-note">' + esc(p.notes) + '</p>' : '') +
-        '<div class="pcard-foot"><button type="button" class="btn add-btn' + (added ? ' is-added' : '') +
-        '" data-toggle="' + esc(p.id) + '">' + (added ? 'Added ✓' : 'Add') + '</button></div>' +
-        '</article>';
-    }).join('');
+    var field = sectionField();
+    var html = '';
+    if (field) {
+      // sorted lists are contiguous by the section field, so count each run
+      var runs = [];
+      visible.forEach(function (p) {
+        var v = p[field] || 'Other';
+        if (!runs.length || runs[runs.length - 1].value !== v) runs.push({ value: v, items: [] });
+        runs[runs.length - 1].items.push(p);
+      });
+      runs.forEach(function (r) {
+        var unadded = r.items.some(function (p) { return !ids.has(p.id); });
+        html += '<div class="sec-head" style="--ed:' + sectionColor(field, r.value) + '"><b>' + esc(r.value) +
+          '</b><span class="sec-n">' + r.items.length + '</span>' +
+          (unadded ? '<button type="button" class="btn btn-ghost" data-addsec="' + esc(r.value) + '">Add shown</button>' : '') +
+          '</div>';
+        html += r.items.map(function (p) { return cardHtml(p, ids, cv.extraByKey); }).join('');
+      });
+    } else {
+      html = visible.map(function (p) { return cardHtml(p, ids, cv.extraByKey); }).join('');
+    }
+    $('#cards').innerHTML = html;
   }
+
+  var SIM_KEY = {};
+  PROMPTS.forEach(function (p) { if (p.simKey != null) SIM_KEY[p.id] = p.simKey; });
 
   function renderSet() {
     var n = state.sel.length;
@@ -202,6 +269,14 @@
     $('#setSummary').textContent = n
       ? n + (n === 1 ? ' prompt' : ' prompts') + ' — drag (or use arrows) to reorder; tap Edit to reword.'
       : 'Arrange, edit, and annotate your selected prompts.';
+    // flag items that are near-duplicates of an earlier item in the set
+    var firstBySim = {}, warns = {};
+    state.sel.forEach(function (s, i) {
+      var k = SIM_KEY[s.srcId];
+      if (k == null) return;
+      if (firstBySim[k] === undefined) firstBySim[k] = i;
+      else warns[s.uid] = firstBySim[k] + 1;
+    });
     $('#setList').innerHTML = state.sel.map(function (s, i) {
       return '<li class="set-item" draggable="true" data-uid="' + s.uid + '">' +
         '<div class="item-head">' +
@@ -212,6 +287,7 @@
         (s.srcId ? '<span class="pid">' + esc(s.srcId) + '</span>' : '<span class="pid">custom</span>') +
         '</div>' +
         '<p class="item-text">' + esc(s.text) + '</p>' +
+        (warns[s.uid] ? '<p class="item-warn">Similar wording to #' + warns[s.uid] + ' in your set</p>' : '') +
         (s.srcNote ? '<p class="item-srcnote">Guidance: ' + esc(s.srcNote) + '</p>' : '') +
         '<textarea class="item-note" data-note="' + s.uid + '" rows="1" placeholder="Facilitator note (optional) — appears in exports">' + esc(s.userNote) + '</textarea>' +
         '<div class="item-actions">' +
@@ -257,6 +333,7 @@
     var altBtn = $('#altBtn');
     altBtn.hidden = e.format !== 'agenda';
     altBtn.disabled = n === 0;
+    $('#previewBtn').disabled = n === 0;
     $('#exportHint').textContent = (e.format === 'agenda' && n) ? 'Runs ' + agendaSpan() : '';
   }
 
@@ -404,6 +481,137 @@
     toast('Downloaded ' + name);
   }
 
+  /* ---------- export preview ---------- */
+
+  function metaBits(it, o) {
+    var bits = [];
+    if (o.ids && it.id) bits.push(it.id);
+    if (o.showEd && it.edition) bits.push(it.edition);
+    if (o.showFw && it.fw) bits.push(it.fw);
+    if (o.showCat && it.category) bits.push(it.category);
+    if (o.showType && it.type) bits.push(it.type);
+    return bits.join(' · ');
+  }
+  function pvGroups(items, o) {
+    if (!o.groupBy) return [{ name: null, items: items }];
+    var order = [], map = {};
+    items.forEach(function (it) {
+      var c = it[o.groupBy] || 'Other';
+      if (!map[c]) { map[c] = []; order.push(c); }
+      map[c].push(it);
+    });
+    return order.map(function (c) { return { name: c, items: map[c] }; });
+  }
+  function pvCover(o, kicker) {
+    var bits = [o.dateStr, o.facilitator ? 'Facilitator: ' + o.facilitator : '', o.org]
+      .filter(Boolean).join('  ·  ');
+    return '<div class="pv-cover"><p class="pv-kicker">' + esc(kicker) + '</p>' +
+      '<h1>' + esc(o.title) + '</h1>' +
+      (o.subtitle ? '<p class="pv-sub">' + esc(o.subtitle) + '</p>' : '') +
+      (bits ? '<p class="pv-cm">' + esc(bits) + '</p>' : '') + '</div>';
+  }
+  function pvDocHtml(items, o) {
+    function one(it) {
+      var h = '<div class="pv-item"><p class="pv-q">' +
+        (o.numbers ? '<span class="pv-num">' + it.n + '.</span>&nbsp; ' : '') + esc(it.text) + '</p>';
+      var m = metaBits(it, o);
+      if (m) h += '<p class="pv-meta">' + esc(m) + '</p>';
+      if (o.guidance && it.srcNote) h += '<p class="pv-note">Guidance: ' + esc(it.srcNote) + '</p>';
+      if (o.myNotes && it.userNote) h += '<p class="pv-note">Facilitator note: ' + esc(it.userNote) + '</p>';
+      for (var k = 0; k < o.lines; k++) h += '<div class="pv-line"></div>';
+      return h + '</div>';
+    }
+    var brk = '<div class="pv-brk">page break</div>';
+    var html = pvCover(o, 'SELN Strategic Reflection Guide · ' + items.length +
+      (items.length === 1 ? ' prompt' : ' prompts'));
+    var first = true;
+    pvGroups(items, o).forEach(function (g) {
+      if (g.name) {
+        if (o.breaks && !first) html += brk;
+        html += '<h2 class="pv-cat">' + esc(g.name) + '</h2>';
+      }
+      g.items.forEach(function (it, i) {
+        if (o.breaks && !first && !(g.name && i === 0)) html += brk;
+        html += one(it);
+        first = false;
+      });
+    });
+    return '<div class="pv-page">' + html + '</div>';
+  }
+  function pvAgendaHtml(items, o) {
+    var d = X.agendaData(items, o);
+    var o2 = Object.assign({}, o, { dateStr: [o.dateStr, d.span].filter(Boolean).join('  ·  ') });
+    var html = pvCover(o2, 'Meeting Agenda') +
+      '<table class="pv-agenda"><thead><tr><th>Time</th><th>Min</th><th>Item</th></tr></thead><tbody>';
+    d.rows.forEach(function (r) {
+      html += '<tr><td class="pv-time">' + X.fmt12(r.t) + '</td><td class="pv-min">' + r.min + '</td><td><b>' +
+        esc(r.title) + '</b>' +
+        (r.meta ? '<br><span class="pv-meta">' + esc(r.meta) + '</span>' : '') +
+        r.notes.map(function (nt) { return '<br><span class="pv-note">' + esc(nt) + '</span>'; }).join('') +
+        '</td></tr>';
+    });
+    return '<div class="pv-page">' + html + '</tbody></table></div>';
+  }
+  function pvSlidesHtml(items, o) {
+    function slide(inner, cls) {
+      return '<div class="pv-slide' + (cls ? ' ' + cls : '') + '">' + inner + '</div>';
+    }
+    var bits = [o.facilitator ? 'Facilitated by ' + o.facilitator : '', o.org, o.dateStr]
+      .filter(Boolean).join('  ·  ');
+    var html = slide(
+      '<div class="pv-sl-rule"></div><div class="pv-sl-kicker">' +
+      esc(items.length + ' reflection prompts — SELN Strategic Reflection Guide') + '</div>' +
+      '<div class="pv-sl-title">' + esc(o.title) + '</div>' +
+      (o.subtitle ? '<div class="pv-sl-sub">' + esc(o.subtitle) + '</div>' : '') +
+      (bits ? '<div class="pv-sl-foot"><span>' + esc(bits) + '</span></div>' : ''));
+    pvGroups(items, o).forEach(function (g) {
+      if (g.name) {
+        html += slide('<div class="pv-sl-rule"></div><div class="pv-sl-kicker">Section</div>' +
+          '<div class="pv-sl-title">' + esc(g.name) + '</div>' +
+          '<div class="pv-sl-foot"><span>' + g.items.length +
+          (g.items.length === 1 ? ' prompt' : ' prompts') + '</span></div>');
+      }
+      g.items.forEach(function (it) {
+        var kick = [];
+        if (o.showFw && it.fw) kick.push(it.fw);
+        if (o.showCat && it.category) kick.push(it.category);
+        if (o.showEd && it.edition) kick.push(it.edition);
+        var foot = [];
+        if (o.ids && it.id) foot.push(it.id);
+        if (o.showType && it.type) foot.push(it.type);
+        if (o.guidance && it.srcNote) foot.push(it.srcNote);
+        if (o.myNotes && it.userNote) foot.push(it.userNote);
+        var sz = it.text.length < 90 ? 'sz1' : it.text.length < 160 ? 'sz2' : it.text.length < 240 ? 'sz3' : 'sz4';
+        html += slide(
+          (kick.length ? '<div class="pv-sl-kicker">' + esc(kick.join('  ·  ')) + '</div>' : '') +
+          '<div class="pv-sl-rule"></div>' +
+          '<div class="pv-sl-text ' + sz + '"><span>' + esc(it.text) + '</span></div>' +
+          '<div class="pv-sl-foot"><span>' + esc(foot.join('  ·  ')) + '</span><span>' +
+          it.n + ' / ' + items.length + '</span></div>');
+      });
+    });
+    return html;
+  }
+
+  function openPreview() {
+    if (!state.sel.length) return;
+    var items = exportItems();
+    var o = exportOpts();
+    var fmt = state.exp.format;
+    var names = { word: 'Word document (.docx)', pptx: 'PowerPoint deck (.pptx)', agenda: 'Meeting agenda', pdf: 'PDF handout' };
+    $('#pvTitle').textContent = names[fmt];
+    $('#pvHint').textContent = fmt === 'agenda'
+      ? 'Runs ' + X.agendaData(items, o).span
+      : items.length + (items.length === 1 ? ' prompt' : ' prompts');
+    $('#pvDownload').textContent = { word: 'Download .docx', pptx: 'Download .pptx', agenda: 'Download .docx', pdf: 'Download .pdf' }[fmt];
+    $('#pvBody').innerHTML = fmt === 'pptx' ? pvSlidesHtml(items, o)
+      : fmt === 'agenda' ? pvAgendaHtml(items, o)
+      : pvDocHtml(items, o);
+    $('#pvBody').scrollTop = 0;
+    $('#previewBackdrop').hidden = false;
+  }
+  function closePreview() { $('#previewBackdrop').hidden = true; }
+
   /* ---------- events ---------- */
 
   $('#tabs').addEventListener('click', function (ev) {
@@ -437,7 +645,30 @@
     if (state.fws.has(fw)) state.fws.delete(fw); else state.fws.add(fw);
     render();
   });
+  $('#condenseChk').addEventListener('change', function (ev) {
+    state.condense = ev.target.checked;
+    render();
+  });
   $('#cards').addEventListener('click', function (ev) {
+    var simBtn = ev.target.closest('[data-sim]');
+    if (simBtn) {
+      var k = +simBtn.dataset.sim;
+      if (openSims.has(k)) openSims.delete(k); else openSims.add(k);
+      renderCards();
+      return;
+    }
+    var secBtn = ev.target.closest('[data-addsec]');
+    if (secBtn) {
+      var field = sectionField();
+      var ids2 = selIds();
+      var added = 0;
+      computeVisible(filtered()).visible.forEach(function (p) {
+        if ((p[field] || 'Other') === secBtn.dataset.addsec && !ids2.has(p.id)) { addPrompt(p); added++; }
+      });
+      toast('Added ' + added + (added === 1 ? ' prompt' : ' prompts') + ' — ' + state.sel.length + ' in set');
+      render();
+      return;
+    }
     var btn = ev.target.closest('[data-toggle]');
     if (!btn) return;
     var id = btn.dataset.toggle;
@@ -453,7 +684,7 @@
   $('#addAllBtn').addEventListener('click', function () {
     var ids = selIds();
     var added = 0;
-    filtered().forEach(function (p) {
+    computeVisible(filtered()).visible.forEach(function (p) {
       if (!ids.has(p.id)) { addPrompt(p); added++; }
     });
     toast('Added ' + added + (added === 1 ? ' prompt' : ' prompts') + ' — ' + state.sel.length + ' in set');
@@ -479,7 +710,9 @@
     renderSheet();
   });
   document.addEventListener('keydown', function (ev) {
-    if (ev.key === 'Escape' && !$('#filterBackdrop').hidden) closeSheet();
+    if (ev.key !== 'Escape') return;
+    if (!$('#previewBackdrop').hidden) closePreview();
+    else if (!$('#filterBackdrop').hidden) closeSheet();
   });
 
   // My Set
@@ -623,6 +856,12 @@
 
   $('#exportBtn').addEventListener('click', function () { runExport(false); });
   $('#altBtn').addEventListener('click', function () { runExport(true); });
+  $('#previewBtn').addEventListener('click', openPreview);
+  $('#closePreview').addEventListener('click', closePreview);
+  $('#pvDownload').addEventListener('click', function () { runExport(false); closePreview(); });
+  $('#previewBackdrop').addEventListener('click', function (ev) {
+    if (ev.target === ev.currentTarget) closePreview();
+  });
 
   /* ---------- init ---------- */
 
@@ -634,6 +873,7 @@
   $('#docOrg').value = state.doc.org;
   $('#docDate').value = state.doc.date;
   $('#sort').value = state.sort;
+  $('#condenseChk').checked = state.condense;
   document.querySelector('#formats input[value="' + state.exp.format + '"]').checked = true;
   $('#optNumbers').checked = state.exp.numbers;
   $('#optIds').checked = state.exp.ids;

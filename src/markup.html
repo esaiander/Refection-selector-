@@ -32,7 +32,12 @@
       <div class="chips chips-fw" id="fwChips" role="group" aria-label="Filter by category"></div>
       <div class="result-row">
         <span class="result-count" id="resultCount"></span>
-        <button type="button" class="btn btn-ghost" id="addAllBtn">Add all shown</button>
+        <span class="result-actions">
+          <label class="check condense-chk" title="Collapse near-duplicate wordings behind a '+N similar' chip">
+            <input type="checkbox" id="condenseChk" checked>Condense similar
+          </label>
+          <button type="button" class="btn btn-ghost" id="addAllBtn">Add all shown</button>
+        </span>
       </div>
       <div class="cards" id="cards"></div>
     </section>
@@ -137,6 +142,7 @@
         </fieldset>
       </div>
       <div class="export-actions">
+        <button type="button" class="btn btn-big" id="previewBtn">Preview</button>
         <button type="button" class="btn btn-primary btn-big" id="exportBtn">Download .docx</button>
         <button type="button" class="btn" id="altBtn" hidden>Download agenda .pdf</button>
         <span class="export-hint" id="exportHint"></span>
@@ -160,6 +166,18 @@
     <div class="sheet-foot">
       <button type="button" class="btn btn-primary" id="applyFilters">Show results</button>
     </div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="previewBackdrop" hidden>
+  <div class="sheet sheet-wide" role="dialog" aria-modal="true" aria-label="Export preview">
+    <div class="sheet-head">
+      <b id="pvTitle">Preview</b>
+      <span class="export-hint" id="pvHint"></span>
+      <button type="button" class="btn btn-primary" id="pvDownload">Download</button>
+      <button type="button" class="btn icon-btn" id="closePreview" aria-label="Close preview">✕</button>
+    </div>
+    <div class="sheet-body pv-body" id="pvBody"></div>
   </div>
 </div>
 

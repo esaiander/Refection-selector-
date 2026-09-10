@@ -19,7 +19,12 @@ it anywhere (e.g. GitHub Pages).
   (Opener / Core Question / Follow-up / Closing) via quick chips or the filter
   sheet; sort by guide order, A–Z, category, type, or edition. One-tap add, or
   "Add all shown" for a filtered view. Each prompt also keeps its original
-  fine-grained category for display and export.
+  fine-grained category for display and export. Near-duplicate wordings
+  (detected at build time by token overlap) are condensed behind a
+  "+N similar" chip — expandable per cluster, and switchable off entirely —
+  and sorted views show section headers with per-section counts and their own
+  "Add shown" button. If your set contains two variants of the same question,
+  the second one is flagged in My Set.
 - **My Set** — reorder by drag (or arrow buttons on mobile), reword any prompt,
   attach facilitator notes, write custom prompts, and clear or continue to export.
   Your set and settings persist in the browser between visits.
@@ -40,7 +45,9 @@ it anywhere (e.g. GitHub Pages).
     as the Word guide.
 
   All four formats are genuine files generated entirely in the browser —
-  no server, no libraries, no print dialog.
+  no server, no libraries, no print dialog. A Preview button shows the
+  document pages, agenda table, or slide deck on screen — reflecting every
+  option — before anything is downloaded.
 
 ## Develop
 
