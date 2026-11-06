@@ -1,0 +1,94 @@
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-name">SELN <em>State Waiver Definitions</em></div>
+      <div class="brand-sub" id="brandSub"></div>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="btn btn-ghost btn-sm hide-present" id="themeBtn" title="Switch light / dark">Theme</button>
+      <a class="btn btn-ghost btn-sm hide-present" href="index.html" title="Open the SELN Prompt Studio">Prompt Studio</a>
+      <button type="button" class="btn btn-sm" id="presentBtn" title="Large type for screen sharing (Esc to exit)">Present</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Views" id="tabs">
+    <button type="button" class="tab is-active" data-view="lookup">Lookup</button>
+    <button type="button" class="tab" data-view="compare">Compare<span class="tab-count" id="pinCount" hidden>0</span></button>
+    <button type="button" class="tab" data-view="search">Search</button>
+    <button type="button" class="tab" data-view="data">Data</button>
+  </nav>
+
+  <main>
+    <section id="view-lookup" class="view">
+      <div class="control-row">
+        <button type="button" class="btn btn-sm" id="prevState" title="Previous state">&larr;</button>
+        <select id="stateSel" class="select select-lg" aria-label="State"></select>
+        <button type="button" class="btn btn-sm" id="nextState" title="Next state">&rarr;</button>
+        <span class="state-meta" id="stateMeta"></span>
+        <span class="grow"></span>
+        <button type="button" class="btn btn-sm hide-present" id="expandAll">Expand all</button>
+        <button type="button" class="btn btn-sm hide-present" id="pinState" title="Pin every definition shown">Pin shown</button>
+      </div>
+      <div class="chips" id="catChips" role="group" aria-label="Filter by category"></div>
+      <div class="chips" id="topicChips" role="group" aria-label="Filter by topic"></div>
+      <div id="stateNotes"></div>
+      <div id="lookupList"></div>
+    </section>
+
+    <section id="view-compare" class="view" hidden>
+      <div class="control-row">
+        <button type="button" class="btn btn-sm is-on" id="modeStates" data-mode="states">By state</button>
+        <button type="button" class="btn btn-sm" id="modePinned" data-mode="pinned">Pinned <span id="pinCount2">0</span></button>
+        <span class="grow"></span>
+        <button type="button" class="btn btn-sm hide-present" id="clearPins">Clear pinned</button>
+      </div>
+      <div class="compare-controls" id="compareControls">
+        <select class="select cmp-state" data-slot="0" aria-label="State 1"></select>
+        <select class="select cmp-state" data-slot="1" aria-label="State 2"></select>
+        <select class="select cmp-state" data-slot="2" aria-label="State 3"></select>
+        <select class="select cmp-state" data-slot="3" aria-label="State 4"></select>
+        <select class="select" id="cmpCat" aria-label="Category"></select>
+        <select class="select" id="cmpTopic" aria-label="Topic"></select>
+      </div>
+      <div class="columns" id="compareCols"></div>
+    </section>
+
+    <section id="view-search" class="view" hidden>
+      <input id="q" class="search" type="search" placeholder="Search all definitions… (e.g. “customized employment”, “fading”, “group of two to eight”)" aria-label="Search definitions">
+      <div class="chips" id="searchCatChips" role="group" aria-label="Filter results by category"></div>
+      <div class="result-row">
+        <span class="result-count" id="searchCount"></span>
+        <label class="lbl">Sort
+          <select id="searchSort" class="select">
+            <option value="state">State</option>
+            <option value="category">Category</option>
+            <option value="title">Title</option>
+          </select>
+        </label>
+      </div>
+      <div id="searchList"></div>
+    </section>
+
+    <section id="view-data" class="view" hidden></section>
+  </main>
+
+  <div class="tray" id="tray" hidden>
+    <span id="trayText">0 pinned</span>
+    <button type="button" class="btn btn-sm btn-primary" id="trayCompare">Compare</button>
+    <button type="button" class="btn btn-sm btn-ghost" id="trayClear">Clear</button>
+  </div>
+</div>
+
+<div class="focus" id="focus" hidden role="dialog" aria-modal="true" aria-label="Definition">
+  <div class="focus-card">
+    <div class="focus-bar">
+      <button type="button" class="btn btn-sm" id="focusPrev" title="Previous (←)">&larr;</button>
+      <button type="button" class="btn btn-sm" id="focusNext" title="Next (→)">&rarr;</button>
+      <span class="sp"></span>
+      <button type="button" class="btn btn-sm" id="focusCopy">Copy with citation</button>
+      <button type="button" class="btn btn-sm" id="focusPin">Pin</button>
+      <button type="button" class="btn btn-sm btn-primary" id="focusClose" title="Close (Esc)">Close</button>
+    </div>
+    <div id="focusBody"></div>
+  </div>
+</div>
